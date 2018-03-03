@@ -6,6 +6,11 @@ import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import fr.aquillet.kiwi.command.Commands;
+import fr.aquillet.kiwi.command.launcher.UpdateLauncherCommandCommand;
+import fr.aquillet.kiwi.command.launcher.UpdateLauncherStartDelayCommand;
+import fr.aquillet.kiwi.command.launcher.UpdateLauncherTitleCommand;
+import fr.aquillet.kiwi.command.launcher.UpdateLauncherWorkingDirectoryCommand;
 import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.toolkit.rx.RxUtils;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
@@ -20,10 +25,10 @@ public class EditLauncherViewModel implements ViewModel, SceneLifecycle {
 
     private Command testLauncherCommand;
     private BooleanProperty testLauncherPrecondition = new SimpleBooleanProperty(false);
-    private StringProperty launcherTitle = new SimpleStringProperty();
-    private StringProperty launcherCommand = new SimpleStringProperty();
-    private StringProperty launcherWorkingDirectory = new SimpleStringProperty();
-    private IntegerProperty launcherStartDelay = new SimpleIntegerProperty();
+    private StringProperty launcherTitle = new SimpleStringProperty("");
+    private StringProperty launcherCommand = new SimpleStringProperty("");
+    private StringProperty launcherWorkingDirectory = new SimpleStringProperty("");
+    private IntegerProperty launcherStartDelay = new SimpleIntegerProperty(0);
 
     @Inject
     private JnaService jnaService;
@@ -48,6 +53,11 @@ public class EditLauncherViewModel implements ViewModel, SceneLifecycle {
             launcherCommand.set(launcher.getCommand());
             launcherWorkingDirectory.set(launcher.getWorkingDirectory());
             launcherStartDelay.set(launcher.getStartDelaySecond());
+
+            launcherTitle.addListener((obs, oldValue, newValue) -> notificationCenter.publish(Commands.LAUNCHER, new UpdateLauncherTitleCommand(launcher.getId(), newValue)));
+            launcherCommand.addListener((obs, oldValue, newValue) -> notificationCenter.publish(Commands.LAUNCHER, new UpdateLauncherCommandCommand(launcher.getId(), newValue)));
+            launcherWorkingDirectory.addListener((obs, oldValue, newValue) -> notificationCenter.publish(Commands.LAUNCHER, new UpdateLauncherWorkingDirectoryCommand(launcher.getId(), newValue)));
+            launcherStartDelay.addListener((obs, oldValue, newValue) -> notificationCenter.publish(Commands.LAUNCHER, new UpdateLauncherStartDelayCommand(launcher.getId(), newValue.intValue())));
         });
     }
 

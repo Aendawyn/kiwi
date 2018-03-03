@@ -4,20 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
-import fr.aquillet.kiwi.model.Application;
-import fr.aquillet.kiwi.model.Label;
-import fr.aquillet.kiwi.model.Launcher;
-import fr.aquillet.kiwi.model.Scenario;
-import fr.aquillet.kiwi.ui.configuration.GlobalConfiguration;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.application.ApplicationCreatedEvent;
 import fr.aquillet.kiwi.event.application.ApplicationTitleUpdatedEvent;
 import fr.aquillet.kiwi.event.label.LabelCreatedEvent;
-import fr.aquillet.kiwi.event.launcher.LauncherCreatedEvent;
+import fr.aquillet.kiwi.event.launcher.*;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
-import fr.aquillet.kiwi.ui.service.application.IApplicationService;
+import fr.aquillet.kiwi.model.Application;
+import fr.aquillet.kiwi.model.Label;
+import fr.aquillet.kiwi.model.Launcher;
+import fr.aquillet.kiwi.model.Scenario;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
+import fr.aquillet.kiwi.ui.configuration.GlobalConfiguration;
+import fr.aquillet.kiwi.ui.service.application.IApplicationService;
+import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -36,12 +38,15 @@ public class PersistenceService implements IPersistenceService {
     private static final String JSON_EXT = ".json";
     private final ObjectMapper mapper = new ObjectMapper();
     private IApplicationService applicationService;
+    private ILauncherService launcherService;
     private File applicationsDir;
 
     @Inject
     private void setDependencies(final NotificationCenter notificationCenter, //
-                                 final IApplicationService applicationService) {
+                                 final IApplicationService applicationService, //
+                                 final ILauncherService launcherService) {
         this.applicationService = applicationService;
+        this.launcherService = launcherService;
         initFileSystemPersistence();
         notificationCenter.subscribe(Events.APPLICATION, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
         notificationCenter.subscribe(Events.LAUNCHER, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
@@ -125,9 +130,34 @@ public class PersistenceService implements IPersistenceService {
 
     @Dispatch
     public void handle(LauncherCreatedEvent event) {
+        saveLauncher(event.getLaucher().getId());
+    }
+
+    @Dispatch
+    public void handle(LauncherTitleUpdatedEvent event) {
+        saveLauncher(event.getId());
+    }
+
+    @Dispatch
+    public void handle(LauncherCommandUpdatedEvent event) {
+        saveLauncher(event.getId());
+    }
+
+    @Dispatch
+    public void handle(LauncherWorkingDirectoryUpdatedEvent event) {
+        saveLauncher(event.getId());
+    }
+
+    @Dispatch
+    public void handle(LauncherStartDelayUpdatedEvent event) {
+        saveLauncher(event.getId());
+    }
+
+    private void saveLauncher(UUID launcherId) {
         Application currentApplication = applicationService.getCurrentApplication();
-        write(event.getLaucher(), Launcher.class,
-                new File(getLauncherFolder(currentApplication), getLauncherFileName(event.getLaucher())));
+        launcherService.getLauncherById(launcherId) //
+                .ifPresent(launcher -> write(launcher, Launcher.class,
+                        new File(getLauncherFolder(currentApplication), getLauncherFileName(launcher))));
     }
 
     private File getLauncherFolder(Application application) {

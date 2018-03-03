@@ -2,6 +2,7 @@ package fr.aquillet.kiwi.ui.view.dashboard.application;
 
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import fr.aquillet.kiwi.event.launcher.LauncherTitleUpdatedEvent;
 import fr.aquillet.kiwi.model.Application;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.command.application.UpdateApplicationTitleCommand;
@@ -84,6 +85,11 @@ public class DashboardApplicationViewModel implements ViewModel {
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
     public void handle(LaunchersReloadedEvent event) {
+        reloadLaunchers();
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(LauncherTitleUpdatedEvent event) {
         reloadLaunchers();
     }
 

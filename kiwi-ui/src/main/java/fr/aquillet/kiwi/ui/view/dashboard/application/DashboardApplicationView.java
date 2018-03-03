@@ -8,6 +8,7 @@ import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import de.saxsys.mvvmfx.utils.viewlist.CachedViewModelCellFactory;
 import fr.aquillet.kiwi.command.Commands;
+import fr.aquillet.kiwi.toolkit.ui.fx.JfxUtil;
 import fr.aquillet.kiwi.ui.view.label.LabelListView;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import fr.aquillet.kiwi.ui.view.label.creation.CreateLabelView;
@@ -49,12 +50,7 @@ public class DashboardApplicationView implements FxmlView<DashboardApplicationVi
         applicationIdLabel.textProperty().bind(viewModel.applicationIdProperty());
 
         applicationTitleField.setText(viewModel.applicationTitleProperty().get());
-        applicationTitleField.focusedProperty().addListener((obs, oldValue, newValue) -> {
-            if (!newValue
-                    && !applicationTitleField.getText().equals(viewModel.applicationTitleProperty().getValueSafe())) {
-                viewModel.applicationTitleProperty().set(applicationTitleField.getText());
-            }
-        });
+        JfxUtil.copyValueOnFocusLoss(applicationTitleField, applicationTitleField.textProperty(), viewModel.applicationTitleProperty());
 
         launchersList.setItems(viewModel.launchersProperty());
         launchersList.setCellFactory(CachedViewModelCellFactory.createForFxmlView(LauncherListView.class));

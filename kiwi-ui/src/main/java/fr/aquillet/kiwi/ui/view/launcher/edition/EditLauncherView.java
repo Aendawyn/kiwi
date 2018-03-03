@@ -5,6 +5,7 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.command.Commands;
+import fr.aquillet.kiwi.toolkit.ui.fx.JfxUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 
@@ -32,11 +33,21 @@ public class EditLauncherView implements FxmlView<EditLauncherViewModel> {
     private NotificationCenter notificationCenter;
 
     public void initialize() {
-        launcherNameField.textProperty().bindBidirectional(viewModel.launcherTitleProperty());
-        viewModel.launcherCommandProperty().bindBidirectional(launcherCommandField.textProperty());
-        viewModel.launcherWorkingDirectoryProperty().bindBidirectional(launcherWorkingDirectoryField.textProperty());
-        launcherStartDelayField.textProperty().addListener((observable, oldValue, newValue) -> viewModel.launcherStartDelayProperty().setValue(Integer.valueOf(newValue)));
-        viewModel.launcherStartDelayProperty().addListener((observable, oldValue, newValue) -> launcherStartDelayField.setText(String.valueOf(newValue)));
+        JfxUtil.copyValueOnce(viewModel.launcherTitleProperty(), launcherNameField.textProperty());
+        JfxUtil.copyValueOnce(viewModel.launcherCommandProperty(), launcherCommandField.textProperty());
+        JfxUtil.copyValueOnce(viewModel.launcherWorkingDirectoryProperty(), launcherWorkingDirectoryField.textProperty());
+        JfxUtil.copyValueOnce(viewModel.launcherStartDelayProperty(), launcherStartDelayField.textProperty(), String::valueOf);
+
+        JfxUtil.copyValueOnFocusLoss(launcherNameField, launcherNameField.textProperty(), viewModel.launcherTitleProperty());
+        JfxUtil.copyValueOnFocusLoss(launcherCommandField, launcherCommandField.textProperty(), viewModel.launcherCommandProperty());
+        JfxUtil.copyValueOnFocusLoss(launcherWorkingDirectoryField, launcherWorkingDirectoryField.textProperty(), viewModel.launcherWorkingDirectoryProperty());
+        JfxUtil.copyValueOnFocusLoss(launcherStartDelayField, launcherStartDelayField.textProperty(), viewModel.launcherStartDelayProperty(), Integer::valueOf);
+
+        launcherStartDelayField.textProperty().addListener((obs, old, value) -> {
+            if (!value.matches("\\d*")) {
+                launcherStartDelayField.setText(value.replaceAll("[^\\d]", ""));
+            }
+        });
 
         testLauncherButton.disableProperty().bind(viewModel.getTestLauncherCommand().notExecutableProperty());
     }
