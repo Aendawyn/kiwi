@@ -10,6 +10,7 @@ import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.toolkit.rx.RxUtils;
 import fr.aquillet.kiwi.ui.configuration.GlobalConfiguration;
 import fr.aquillet.kiwi.ui.module.ControllerModule;
+import fr.aquillet.kiwi.ui.module.PersistenceModule;
 import fr.aquillet.kiwi.ui.module.ServiceModule;
 import fr.aquillet.kiwi.ui.view.MainView;
 import javafx.application.Platform;
@@ -66,6 +67,7 @@ public class KiwiApplication extends MvvmfxGuiceApplication {
 
     @Override
     public void initGuiceModules(List<Module> modules) throws Exception {
+        modules.add(new PersistenceModule());
         modules.add(new ControllerModule());
         modules.add(new ServiceModule());
     }

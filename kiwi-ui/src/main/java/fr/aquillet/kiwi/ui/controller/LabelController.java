@@ -8,10 +8,11 @@ import fr.aquillet.kiwi.command.label.ReloadLabelsCommand;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.label.LabelCreatedEvent;
 import fr.aquillet.kiwi.event.label.LabelsReloadedEvent;
+import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
-import fr.aquillet.kiwi.ui.service.persistence.IPersistenceService;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
+import fr.aquillet.kiwi.ui.service.persistence.ILabelPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -21,14 +22,17 @@ public class LabelController {
 
     private NotificationCenter notificationCenter;
     private ILabelService labelService;
-    private IPersistenceService persistenceService;
+    private IApplicationService applicationService;
+    private ILabelPersistenceService persistenceService;
 
     @Inject
     private void setDependencies(final NotificationCenter notificationCenter, //
                                  ILabelService labelService, //
-                                 IPersistenceService persistenceService) {
+                                 IApplicationService applicationService, //
+                                 ILabelPersistenceService persistenceService) {
         this.notificationCenter = notificationCenter;
         this.labelService = labelService;
+        this.applicationService = applicationService;
         this.persistenceService = persistenceService;
         notificationCenter.subscribe(Commands.LABEL, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
     }
@@ -37,7 +41,7 @@ public class LabelController {
     public void handle(ReloadLabelsCommand command) {
         log.info("Reloading labels");
         labelService.getLabels().clear();
-        labelService.getLabels().addAll(persistenceService.getLabelsForCurrentApplication());
+        labelService.getLabels().addAll(persistenceService.getApplicationLabels(applicationService.getCurrentApplication()));
         notificationCenter.publish(Events.LABEL, new LabelsReloadedEvent());
     }
 

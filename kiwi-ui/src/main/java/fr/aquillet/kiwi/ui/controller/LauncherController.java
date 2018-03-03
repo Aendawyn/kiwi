@@ -8,8 +8,9 @@ import fr.aquillet.kiwi.event.launcher.*;
 import fr.aquillet.kiwi.model.Launcher;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
+import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
-import fr.aquillet.kiwi.ui.service.persistence.IPersistenceService;
+import fr.aquillet.kiwi.ui.service.persistence.ILauncherPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -19,14 +20,17 @@ public class LauncherController {
 
     private NotificationCenter notificationCenter;
     private ILauncherService launcherService;
-    private IPersistenceService persistenceService;
+    private IApplicationService applicationService;
+    private ILauncherPersistenceService persistenceService;
 
     @Inject
     private void setDependencies(final NotificationCenter notificationCenter, //
                                  ILauncherService launcherService, //
-                                 IPersistenceService persistenceService) {
+                                 IApplicationService applicationService, //
+                                 ILauncherPersistenceService persistenceService) {
         this.notificationCenter = notificationCenter;
         this.launcherService = launcherService;
+        this.applicationService = applicationService;
         this.persistenceService = persistenceService;
         notificationCenter.subscribe(Commands.LAUNCHER, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
     }
@@ -35,7 +39,7 @@ public class LauncherController {
     public void handle(ReloadLaunchersCommand command) {
         log.info("Reloading launchers");
         launcherService.getLaunchers().clear();
-        launcherService.getLaunchers().addAll(persistenceService.getLaunchersForCurrentApplication());
+        launcherService.getLaunchers().addAll(persistenceService.getApplicationLaunchers(applicationService.getCurrentApplication()));
         notificationCenter.publish(Events.LAUNCHER, new LaunchersReloadedEvent());
     }
 

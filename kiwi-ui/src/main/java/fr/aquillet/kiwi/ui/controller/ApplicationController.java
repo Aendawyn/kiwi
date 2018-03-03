@@ -13,9 +13,9 @@ import fr.aquillet.kiwi.event.application.ApplicationTitleUpdatedEvent;
 import fr.aquillet.kiwi.event.application.ApplicationsReloadedEvent;
 import fr.aquillet.kiwi.event.application.CurrentApplicationChangedEvent;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
-import fr.aquillet.kiwi.ui.service.persistence.IPersistenceService;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
+import fr.aquillet.kiwi.ui.service.persistence.IApplicationPersistenceService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -25,12 +25,12 @@ public class ApplicationController {
 
     private NotificationCenter notificationCenter;
     private IApplicationService applicationService;
-    private IPersistenceService persistenceService;
+    private IApplicationPersistenceService persistenceService;
 
     @Inject
     private void setDependencies(final NotificationCenter notificationCenter, //
                                  IApplicationService applicationService, //
-                                 IPersistenceService persistenceService) {
+                                 IApplicationPersistenceService persistenceService) {
         this.notificationCenter = notificationCenter;
         this.applicationService = applicationService;
         this.persistenceService = persistenceService;
