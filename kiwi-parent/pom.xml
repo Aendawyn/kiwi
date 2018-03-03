@@ -1,0 +1,180 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.aquillet.kiwi</groupId>
+    <artifactId>kiwi-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <!-- General properties -->
+        <java.version>8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Dependencies versions -->
+        <jna.version>4.5.1</jna.version>
+        <slf4j.version>1.7.25</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <inject.version>1</inject.version>
+        <lombok.version>1.16.20</lombok.version>
+        <rxjava.version>2.1.8</rxjava.version>
+        <mvvm.version>1.7.0</mvvm.version>
+        <jackson.version>2.9.2</jackson.version>
+        <jfoenix.version>8.0.1</jfoenix.version>
+        <controlfx.version>8.40.14</controlfx.version>
+        <rxjavafx.version>2.2.2</rxjavafx.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Modules -->
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-jna</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-command</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-event</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-toolkit</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.aquillet.kiwi</groupId>
+                <artifactId>kiwi-toolkit-ui</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- FX -->
+            <dependency>
+                <groupId>de.saxsys</groupId>
+                <artifactId>mvvmfx</artifactId>
+                <version>${mvvm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.saxsys</groupId>
+                <artifactId>mvvmfx-guice</artifactId>
+                <version>${mvvm.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jfoenix</groupId>
+                <artifactId>jfoenix</artifactId>
+                <version>${jfoenix.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.controlsfx</groupId>
+                <artifactId>controlsfx</artifactId>
+                <version>${controlfx.version}</version>
+            </dependency>
+
+            <!-- JNA -->
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>${jna.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna-platform</artifactId>
+                <version>${jna.version}</version>
+            </dependency>
+
+            <!-- Rx -->
+            <dependency>
+                <groupId>io.reactivex.rxjava2</groupId>
+                <artifactId>rxjava</artifactId>
+                <version>${rxjava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.reactivex.rxjava2</groupId>
+                <artifactId>rxjavafx</artifactId>
+                <version>${rxjavafx.version}</version>
+            </dependency>
+
+            <!-- Tools -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${inject.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- Json -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jdk8</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- Logging -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <modules>
+        <module>kiwi-jna</module>
+        <module>kiwi-ui</module>
+        <module>kiwi-dist</module>
+        <module>kiwi-model</module>
+        <module>kiwi-command</module>
+        <module>kiwi-event</module>
+        <module>kiwi-toolkit</module>
+        <module>kiwi-toolkit-ui</module>
+    </modules>
+</project>

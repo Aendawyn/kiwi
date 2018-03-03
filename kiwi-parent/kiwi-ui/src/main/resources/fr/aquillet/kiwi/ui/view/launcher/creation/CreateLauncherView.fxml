@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<BorderPane prefHeight="150.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.aquillet.kiwi.ui.view.launcher.creation.CreateLauncherView">
+	<top>
+		<HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="400.0" styleClass="dialog-title" BorderPane.alignment="CENTER">
+			<children>
+				<Label text="Créer un nouveau launcher" />
+			</children>
+			<padding>
+				<Insets left="10.0" right="10.0" />
+			</padding>
+		</HBox>
+	</top>
+
+	<center>
+		<VBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0" spacing="10.0" BorderPane.alignment="CENTER">
+			<children>
+				<Label text="Nom du launcher" />
+				<JFXTextField fx:id="launcherNameField" />
+				<Label text="Commande de lancement" />
+				<JFXTextField fx:id="launcherCommandField" />
+				<Label text="Informations:" />
+				<HBox spacing="10">
+					<JFXComboBox fx:id="launcherInfoBox" />
+					<JFXButton fx:id="reloadLaunchersInfoButton" prefWidth="40.0" styleClass="button-raised" onAction="#reloadLaunchersInfoButtonPressed">
+						<graphic>
+							<Glyph fontFamily="FontAwesome" icon="REFRESH" styleClass="light-glyph" />
+						</graphic>
+					</JFXButton>
+				</HBox>
+				<Label text="Répertoire de travail" />
+				<JFXTextField fx:id="launcherWorkingDirectoryField" />
+				<Label text="Délai d'attente après démarrage (en s)" />
+				<JFXTextField fx:id="launcherStartDelayField" />
+				<HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+					<children>
+						<JFXButton fx:id="createLauncherButton" styleClass="button-raised" text="Créer" onAction="#createLauncherButtonPressed" />
+						<JFXButton fx:id="cancelButton" text="Annuler" onAction="#cancelButtonPressed">
+							<styleClass>
+								<String fx:value="red" />
+								<String fx:value="button-raised" />
+							</styleClass>
+						</JFXButton>
+					</children>
+					<padding>
+						<Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+					</padding>
+				</HBox>
+			</children>
+			<BorderPane.margin>
+				<Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
+			</BorderPane.margin>
+		</VBox>
+	</center>
+
+</BorderPane>

@@ -1,0 +1,117 @@
+.root {
+	-fx-dark-gray-color: rgb(65, 65, 65);
+	-fx-dark-green-color: rgb(45.0, 140.0, 95.0);
+	-fx-very-light-green-color: rgb(248, 255, 244);
+	-fx-dark-red-color: rgb(190, 40, 40);
+	-fx-dark-blue-color: rgb(30, 100, 215);
+	-fx-control-background-color: -fx-dark-green-color;
+	-fx-on-dark-color: white;
+	
+	-fx-font-size: 10.0pt;
+    -fx-font-family: "Lucida";
+    -fx-background-color: -fx-very-light-green-color;
+}
+
+.main-view {
+    -fx-border-width: 2; 
+    -fx-border-color: black;
+}
+
+.tree-table-view .tree-table-cell {
+    -fx-padding: 3 0 3 0;
+}
+
+.application-title-bar {
+    -fx-background-color: rgb(45.0, 140.0, 95.0);
+    -fx-border-width: 0 0 1 0; 
+    -fx-border-color: black black black black;
+}
+
+.application-title-bar .label {
+	-fx-text-fill: white;
+}
+
+.application-title-bar .label.title {
+	-fx-font-size: 15pt;
+}
+
+.pagination .pagination-control { 
+	visibility: hidden;
+}
+
+.dialog-title {
+    -fx-background-color: -fx-control-background-color;
+}
+
+.dialog-title.red {
+    -fx-background-color: -fx-dark-red-color;
+}
+
+.dialog-title .label {
+	-fx-text-fill: white;
+}
+
+.button-raised {
+    -fx-padding: 0.7em 0.57em;
+    -fx-font-size: 14.0px;
+    -jfx-button-type: RAISED;
+    -fx-text-fill: white;
+    -fx-background-color: -fx-control-background-color;
+}
+
+.small-button-raised {
+    -fx-padding: 0.5em;
+    -fx-font-size: 10.0px;
+    -jfx-button-type: RAISED;
+    -fx-text-fill: white;
+    -fx-background-color: -fx-control-background-color;
+}
+
+
+.button-raised:disabled {
+    -fx-background-color: -fx-dark-gray-color;
+}
+
+.button-raised.red, .small-button-raised.red{
+    -fx-background-color: -fx-dark-red-color;
+}
+
+.button-raised.blue, .small-button-raised.blue{
+    -fx-background-color: -fx-dark-blue-color;
+}
+
+.jfx-combo-box {
+	-jfx-button-type: RAISED;
+    -fx-text-fill: white;
+    -fx-border-color: -fx-control-background-color;
+    -fx-border-width: 2.0;
+    -fx-border-radius: 7.0;
+}
+
+.jfx-combo-box .list-view {
+    -fx-max-height: 180;
+}
+
+.jfx-combo-box .input-line, .jfx-combo-box .input-focused-line {
+	visibility: hidden;
+}
+
+.light-glyph {
+	-fx-text-fill: white;
+}
+
+.jfx-list-cell:selected {
+	-fx-text-fill: black;
+	-fx-background-color: transparent;
+}
+
+.jfx-list-cell:hover {
+	-fx-text-fill: black;
+	-fx-background-color: -fx-dark-green-color;
+}
+
+.label-node {
+	-fx-text-fill: white;
+	-fx-padding: 3 10 3 10;
+    -fx-background-radius: 10px;
+}

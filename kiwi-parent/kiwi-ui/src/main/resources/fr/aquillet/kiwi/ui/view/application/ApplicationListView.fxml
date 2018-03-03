@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	alignment="BASELINE_LEFT" spacing="6.0"
+	fx:controller="fr.aquillet.kiwi.ui.view.application.ApplicationListView">
+	<children>
+		<Label fx:id="titleLabel" />
+	</children>
+	<padding>
+		<Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+	</padding>
+</HBox>

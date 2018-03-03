@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<VBox alignment="BASELINE_LEFT" prefWidth="200.0" spacing="6.0" xmlns="http://javafx.com/javafx/8.0.141"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.aquillet.kiwi.ui.view.launcher.info.LauncherInfoListView">
+    <children>
+        <Label fx:id="titleLabel" VBox.vgrow="ALWAYS"/>
+        <Label fx:id="classLabel" textFill="#5e5e5e" VBox.vgrow="ALWAYS">
+            <font>
+                <Font size="9.0"/>
+            </font>
+            <padding>
+                <Insets left="15.0"/>
+            </padding>
+        </Label>
+    </children>
+    <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0"/>
+    </padding>
+</VBox>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<StackPane xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:id="root" fx:controller="fr.aquillet.kiwi.ui.view.main.ApplicationSelectionView">
+	<children>
+		<BorderPane prefHeight="450" prefWidth="800">
+			<top>
+				<HBox alignment="CENTER_RIGHT" prefHeight="35.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+					<children>
+						<JFXButton fx:id="addApplicationButton" prefWidth="40.0" styleClass="button-raised" onAction="#createApplicationButtonPressed">
+							<graphic>
+								<Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph" />
+							</graphic>
+						</JFXButton>
+					</children>
+					<padding>
+						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+					</padding>
+				</HBox>
+			</top>
+
+			<center>
+				<javafx.scene.layout.VBox alignment="CENTER" spacing="10">
+					<children>
+						<Label text="Veuillez choisir une application ou en créer une nouvelle" />
+						<JFXComboBox fx:id="applicationChoiceBox" prefHeight="30.0" prefWidth="250.0" />
+						<JFXButton fx:id="loadApplicationButton" styleClass="button-raised" text="Charger l'application" onAction="#loadApplicationButtonPressed" />
+					</children>
+				</javafx.scene.layout.VBox>
+			</center>
+
+		</BorderPane>
+	</children>
+</StackPane>

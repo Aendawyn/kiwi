@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.Glyph?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import com.jfoenix.controls.JFXTreeTableColumn?>
+
+<Tab xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" text="Application" fx:controller="fr.aquillet.kiwi.ui.view.dashboard.application.DashboardApplicationView">
+	<HBox alignment="CENTER">
+		<children>
+			<VBox alignment="TOP_LEFT" prefHeight="200.0" spacing="10" HBox.hgrow="ALWAYS">
+				<children>
+					<Label text="Identifiant" />
+					<Label fx:id="applicationIdLabel" />
+					<Label text="Nom de l'application" />
+					<JFXTextField fx:id="applicationTitleField" />
+					<HBox alignment="CENTER_LEFT">
+						<Label text="Launchers" />
+						<HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+							<JFXButton fx:id="addLauncherButton" prefWidth="40.0" styleClass="button-raised" onAction="#addLauncherButtonPressed">
+								<graphic>
+									<Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph" />
+								</graphic>
+							</JFXButton>
+						</HBox>
+						<HBox.margin>
+							<Insets bottom="10.0" left="50.0" right="50.0" top="10.0" />
+						</HBox.margin>
+					</HBox>
+					<JFXListView fx:id="launchersList" />
+				</children>
+
+			</VBox>
+			<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+				<children>
+					<HBox alignment="CENTER_LEFT">
+						<Label text="Etiquettes" />
+						<HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+							<JFXButton fx:id="addLabelButton" prefWidth="40.0" styleClass="button-raised" onAction="#addLabelButtonPressed">
+								<graphic>
+									<Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph" />
+								</graphic>
+							</JFXButton>
+						</HBox>
+						<HBox.margin>
+							<Insets bottom="10.0" left="50.0" right="50.0" top="10.0" />
+						</HBox.margin>
+					</HBox>
+					<JFXListView fx:id="labelsList" />
+				</children>
+			</VBox>
+		</children>
+	</HBox>
+</Tab>

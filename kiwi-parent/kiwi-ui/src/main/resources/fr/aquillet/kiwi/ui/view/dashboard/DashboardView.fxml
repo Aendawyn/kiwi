@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<StackPane xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
+           fx:id="root"
+           fx:controller="fr.aquillet.kiwi.ui.view.dashboard.DashboardView">
+    <BorderPane prefHeight="450" prefWidth="800">
+        <center>
+            <JFXTabPane>
+                <fx:include source="./application/DashboardApplicationView.fxml"/>
+                <fx:include source="./scenario/DashboardScenarioView.fxml"/>
+                <Tab text="Campagnes">
+                </Tab>
+            </JFXTabPane>
+        </center>
+    </BorderPane>
+</StackPane>

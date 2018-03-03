@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.glyphfont.Glyph?>
+<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.141"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.aquillet.kiwi.ui.view.MainView"
+            styleClass="main-view">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="50.0" spacing="20.0" styleClass="application-title-bar"
+              BorderPane.alignment="CENTER"
+              fx:id="headerBox" onMousePressed="#onMousePressed" onMouseDragged="#onMouseDragged">
+            <children>
+                <ImageView fitHeight="40.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../../../../images/kiwi_logo.png"/>
+                    </image>
+                </ImageView>
+                <Label styleClass="title" text="Kiwi Auto Test Bot"/>
+                <HBox alignment="CENTER_RIGHT" prefHeight="100.0">
+                    <children>
+                        <Label text="(version 1.0.0)"/>
+                    </children>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" prefHeight="100.0" HBox.hgrow="ALWAYS" spacing="20">
+                    <children>
+                        <JFXButton fx:id="homeButton" onAction="#onHomeButtonPressed"
+                                   styleClass="small-button-raised, blue">
+                            <graphic>
+                                <Glyph fontFamily="FontAwesome" icon="HOME" styleClass="light-glyph"/>
+                            </graphic>
+                        </JFXButton>
+                        <JFXButton fx:id="closeButton" onAction="#onCloseButtonPressed"
+                                   styleClass="small-button-raised, red">
+                            <graphic>
+                                <Glyph fontFamily="FontAwesome" icon="CLOSE" styleClass="light-glyph"/>
+                            </graphic>
+                        </JFXButton>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+        </HBox>
+    </top>
+    <center>
+        <Pagination fx:id="pagination" BorderPane.alignment="CENTER"/>
+    </center>
+
+</BorderPane>
