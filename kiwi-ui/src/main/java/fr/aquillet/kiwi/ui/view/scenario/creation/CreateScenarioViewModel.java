@@ -5,14 +5,16 @@ import de.saxsys.mvvmfx.utils.commands.Action;
 import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.commands.DelegateCommand;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
+import fr.aquillet.kiwi.command.Commands;
+import fr.aquillet.kiwi.command.scenario.CreateScenarioCommand;
 import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.jna.event.INativeEvent;
 import fr.aquillet.kiwi.jna.event.KeyboardEvent;
 import fr.aquillet.kiwi.jna.event.KeyboardEventType;
 import fr.aquillet.kiwi.jna.event.PauseEvent;
 import fr.aquillet.kiwi.model.Capture;
-import fr.aquillet.kiwi.command.Commands;
-import fr.aquillet.kiwi.command.scenario.CreateScenarioCommand;
+import fr.aquillet.kiwi.model.IScenarioEvent;
+import fr.aquillet.kiwi.model.ScenarioNativeEvent;
 import fr.aquillet.kiwi.toolkit.rx.RxUtils;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
@@ -45,7 +47,7 @@ public class CreateScenarioViewModel implements ViewModel {
     private ObjectProperty<Optional<LabelListViewModel>> scenarioLabel = new SimpleObjectProperty<>();
     private ObjectProperty<Image> screenshot = new SimpleObjectProperty<>();
     private ObjectProperty<Capture> capture = new SimpleObjectProperty<>();
-    private ObservableList<INativeEvent> events = FXCollections.observableArrayList();
+    private ObservableList<IScenarioEvent> events = FXCollections.observableArrayList();
     private ObservableList<LabelListViewModel> labels = FXCollections.observableArrayList();
     private IntegerBinding eventsCount;
 
@@ -89,7 +91,7 @@ public class CreateScenarioViewModel implements ViewModel {
         return capture;
     }
 
-    public ObservableList<INativeEvent> eventsProperty() {
+    public ObservableList<IScenarioEvent> eventsProperty() {
         return events;
     }
 
@@ -139,7 +141,9 @@ public class CreateScenarioViewModel implements ViewModel {
                         .map(list -> {
                             INativeEvent nativeEvent = list.remove(list.size() - 1);
                             list.add(PauseEvent.builder().time(nativeEvent.getTime()).build());
-                            return list;
+                            return list.stream() //
+                                    .map(ScenarioNativeEvent::new) //
+                                    .collect(Collectors.toList());
                         })
                         .subscribe(list -> events.setAll(list), RxUtils.logError(log));
             }

@@ -51,7 +51,7 @@ public class ScenarioController {
                 command.getEvents(), command.getEndCapture());
         log.info("Creating new scenario (id: {}, title: {}, label: {}, events count: {})", //
                 scenario.getId(), scenario.getTitle(), scenario.getLabelId().orElse("none"),
-                scenario.getNativeEvents().size());
+                scenario.getEvents().size());
         scenarioService.getScenarios().add(scenario);
         notificationCenter.publish(Events.SCENARIO, new ScenarioCreatedEvent(scenario));
     }

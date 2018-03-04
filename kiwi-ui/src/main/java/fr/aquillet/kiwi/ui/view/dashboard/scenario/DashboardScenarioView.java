@@ -111,7 +111,7 @@ public class DashboardScenarioView implements FxmlView<DashboardScenarioViewMode
 				Glyph glyph = new Glyph("FontAwesome", FontAwesome.Glyph.PLAY);
 				glyph.getStyleClass().add("light-glyph");
 				runButton.setGraphic(glyph);
-				Command scenrarioCommand = viewModel.runScenrarioCommand(param.getValue().getValue());
+				Command scenrarioCommand = viewModel.runScenarioCommand(param.getValue().getValue());
 				runButton.setOnAction(e -> scenrarioCommand.execute());
 				runButton.disableProperty().bind(scenrarioCommand.notExecutableProperty());
 				return new SimpleObjectProperty<>(runButton);

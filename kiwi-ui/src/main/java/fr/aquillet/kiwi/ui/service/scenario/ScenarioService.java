@@ -1,7 +1,7 @@
 package fr.aquillet.kiwi.ui.service.scenario;
 
-import fr.aquillet.kiwi.jna.event.INativeEvent;
 import fr.aquillet.kiwi.model.Capture;
+import fr.aquillet.kiwi.model.IScenarioEvent;
 import fr.aquillet.kiwi.model.Scenario;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class ScenarioService implements IScenarioService {
     }
 
     @Override
-    public Scenario createScenario(String title, Optional<String> labelId, List<INativeEvent> events, Capture endCapture) {
+    public Scenario createScenario(String title, Optional<String> labelId, List<IScenarioEvent> events, Capture endCapture) {
         return new Scenario(UUID.randomUUID(), title, labelId, events, endCapture);
     }
 

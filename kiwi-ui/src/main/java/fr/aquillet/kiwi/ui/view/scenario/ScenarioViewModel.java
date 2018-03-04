@@ -3,7 +3,7 @@ package fr.aquillet.kiwi.ui.view.scenario;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import de.saxsys.mvvmfx.ViewModel;
 import de.saxsys.mvvmfx.internal.viewloader.DependencyInjector;
-import fr.aquillet.kiwi.jna.event.INativeEvent;
+import fr.aquillet.kiwi.model.IScenarioEvent;
 import fr.aquillet.kiwi.model.Scenario;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
@@ -37,9 +37,9 @@ public class ScenarioViewModel extends RecursiveTreeObject<ScenarioViewModel> im
         label.set(scenario.getLabelId() //
                 .flatMap(id -> labelService.getLabelById(UUID.fromString(id))) //
                 .map(LabelListViewModel::new));
-        stepsCount.set(scenario.getNativeEvents().size());
-        durationSeconds.set(scenario.getNativeEvents().stream() //
-                .mapToLong(INativeEvent::getTime).sum());
+        stepsCount.set(scenario.getEvents().size());
+        durationSeconds.set(scenario.getEvents().stream() //
+                .mapToLong(IScenarioEvent::getTime).sum());
     }
 
     public ReadOnlyObjectProperty<UUID> idProperty() {

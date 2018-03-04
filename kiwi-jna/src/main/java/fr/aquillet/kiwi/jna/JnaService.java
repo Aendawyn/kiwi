@@ -59,7 +59,7 @@ public class JnaService {
         }).observeOn(Schedulers.io());
     }
 
-    public Completable sendNativeEventinput(INativeEvent event) {
+    public Completable sendNativeEventInput(INativeEvent event) {
         return Completable.defer(() -> InputFactory.from(event) //
                 .map(inputs -> inputs.stream() //
                         .map(Observable::just) //

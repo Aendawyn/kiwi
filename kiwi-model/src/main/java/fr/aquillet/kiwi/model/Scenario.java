@@ -1,6 +1,5 @@
 package fr.aquillet.kiwi.model;
 
-import fr.aquillet.kiwi.jna.event.INativeEvent;
 import lombok.*;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class Scenario {
     private String title;
     private Optional<String> labelId;
     @NonNull
-    private List<INativeEvent> nativeEvents;
+    private List<IScenarioEvent> events;
     @NonNull
     private Capture endCapture;
 

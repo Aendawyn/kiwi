@@ -1,7 +1,7 @@
 package fr.aquillet.kiwi.ui.service.scenario;
 
-import fr.aquillet.kiwi.jna.event.INativeEvent;
 import fr.aquillet.kiwi.model.Capture;
+import fr.aquillet.kiwi.model.IScenarioEvent;
 import fr.aquillet.kiwi.model.Scenario;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface IScenarioService {
 
     List<Scenario> getScenarios();
 
-    Scenario createScenario(String title, Optional<String> labelId, List<INativeEvent> events, Capture endCapture);
+    Scenario createScenario(String title, Optional<String> labelId, List<IScenarioEvent> events, Capture endCapture);
 
     Optional<Scenario> getScenarioById(UUID id);
 
