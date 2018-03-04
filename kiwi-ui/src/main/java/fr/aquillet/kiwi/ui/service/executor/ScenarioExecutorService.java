@@ -8,14 +8,13 @@ import fr.aquillet.kiwi.model.*;
 import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
+import fr.aquillet.kiwi.ui.util.KiwiStageUtil;
 import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonView;
 import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonViewModel;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -105,19 +104,10 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
                     Image reference = ImageUtil.createImageFrom(capture.getContent());
 
                     Platform.runLater(() -> {
-                        Stage stage = new Stage();
-                        stage.setTitle("Résultat du scénario");
-                        ViewTuple<CaptureComparisonView, CaptureComparisonViewModel> viewTuple = FluentViewLoader
-                                .fxmlView(CaptureComparisonView.class).load();
+                        ViewTuple<CaptureComparisonView, CaptureComparisonViewModel> viewTuple = FluentViewLoader.fxmlView(CaptureComparisonView.class).load();
                         viewTuple.getViewModel().originalProperty().set(reference);
                         viewTuple.getViewModel().sourceProperty().set(croppedImage);
-                        Scene scene = new Scene(viewTuple.getView());
-                        scene.getStylesheets().add("style/default-style.css");
-                        stage.setScene(scene);
-                        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/kiwi_logo.png")));
-                        stage.setResizable(false);
-                        stage.show();
-
+                        KiwiStageUtil.createStage("Résultat du scénario", viewTuple.getView()).show();
                     });
                 });
     }

@@ -12,6 +12,7 @@ import fr.aquillet.kiwi.ui.configuration.GlobalConfiguration;
 import fr.aquillet.kiwi.ui.module.ControllerModule;
 import fr.aquillet.kiwi.ui.module.PersistenceModule;
 import fr.aquillet.kiwi.ui.module.ServiceModule;
+import fr.aquillet.kiwi.ui.util.KiwiStageUtil;
 import fr.aquillet.kiwi.ui.view.MainView;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -36,16 +37,15 @@ public class KiwiApplication extends MvvmfxGuiceApplication {
         try {
             Scene scene = new Scene(FluentViewLoader.fxmlView(MainView.class).load().getView());
             scene.setFill(Color.TRANSPARENT);
-            scene.getStylesheets().add("style/default-style.css");
+            scene.getStylesheets().add(KiwiStageUtil.KIWI_STYLE_SHEET_PATH);
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setTitle("Kiwi");
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/kiwi_logo.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream(KiwiStageUtil.KIWI_ICON_PATH)));
             stage.setScene(scene);
             stage.show();
 
-            NotificationCenter notificationCenter = DependencyInjector.getInstance()
-                    .getInstanceOf(NotificationCenter.class);
+            NotificationCenter notificationCenter = DependencyInjector.getInstance().getInstanceOf(NotificationCenter.class);
             notificationCenter.subscribe(Commands.HIDE_APPLICATION, (key, payload) -> {
                 Platform.setImplicitExit(false);
                 Platform.runLater(stage::hide);
@@ -55,7 +55,7 @@ public class KiwiApplication extends MvvmfxGuiceApplication {
                 Platform.setImplicitExit(true);
             });
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.error("Unable to setup application stage", t);
         }
     }
 

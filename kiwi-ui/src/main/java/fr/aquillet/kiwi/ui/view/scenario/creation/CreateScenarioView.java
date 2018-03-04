@@ -9,6 +9,7 @@ import de.saxsys.mvvmfx.utils.viewlist.CachedViewModelCellFactory;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.model.Capture;
 import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
+import fr.aquillet.kiwi.ui.util.KiwiStageUtil;
 import fr.aquillet.kiwi.ui.view.label.LabelListView;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModelConverter;
@@ -18,7 +19,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -104,20 +104,17 @@ public class CreateScenarioView implements FxmlView<CreateScenarioViewModel> {
         view.setSmooth(true);
         view.fitWidthProperty().bind(pane.widthProperty());
         view.fitHeightProperty().bind(pane.heightProperty());
-        // image layer: a group of images
         imageLayer.getChildren().add(view);
 
         Platform.runLater(() -> {
-            Stage stage = new Stage();
+            Stage stage = KiwiStageUtil.createStage("Enregistrement de Scénario: capture", pane);
             stage.initStyle(StageStyle.UNDECORATED);
-            stage.setTitle("Enregistrement de Scénario: capture");
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/kiwi_logo.png")));
-            Scene scene = new Scene(pane, image.getWidth(), image.getHeight());
-            stage.setScene(scene);
+            stage.setWidth(image.getWidth());
+            stage.setHeight(image.getHeight());
             stage.setResizable(false);
             stage.show();
             RubberBandSelection rubberBandSelection = new RubberBandSelection(imageLayer);
-            scene.setOnKeyReleased(event -> {
+            stage.getScene().setOnKeyReleased(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
                     Bounds bounds = rubberBandSelection.getBounds();
                     Image croppedImage = ImageUtil.cropImage(image, (int) bounds.getMinX(), (int) bounds.getMinY(), (int) bounds.getWidth(), (int) bounds.getHeight());
