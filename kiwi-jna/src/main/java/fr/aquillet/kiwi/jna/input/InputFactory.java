@@ -62,19 +62,11 @@ public class InputFactory {
     }
 
     private static List<Runnable> from(MouseEvent event) {
-        INPUT inputMove = new INPUT();
-        inputMove.type = new DWORD(INPUT.INPUT_MOUSE);
-        inputMove.input.setType("mi");
-        inputMove.input.mi.dx = new LONG(Math.round(event.getX() * 65535D / User32.INSTANCE.GetSystemMetrics(User32.SM_CXSCREEN)));
-        inputMove.input.mi.dy = new LONG(Math.round((event.getY() + 1) * 65535D / User32.INSTANCE.GetSystemMetrics(User32.SM_CYSCREEN)));
-        inputMove.input.mi.mouseData = new DWORD(0);
-        inputMove.input.mi.time = new DWORD(0);
-        inputMove.input.mi.dwExtraInfo = new ULONG_PTR(0);
-        inputMove.input.mi.dwFlags = new DWORD(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE);
-
         INPUT inputEvent = new INPUT();
         inputEvent.type = new DWORD(INPUT.INPUT_MOUSE);
         inputEvent.input.setType("mi");
+        inputEvent.input.mi.dx = new LONG(Math.round(event.getX() * 65535D / User32.INSTANCE.GetSystemMetrics(User32.SM_CXSCREEN)));
+        inputEvent.input.mi.dy = new LONG(Math.round((event.getY() + 1) * 65535D / User32.INSTANCE.GetSystemMetrics(User32.SM_CYSCREEN)));
         inputEvent.input.mi.time = new DWORD(0);
         inputEvent.input.mi.dwExtraInfo = new ULONG_PTR(0);
         inputEvent.input.mi.dwFlags = getMouseTypeFromEvent(event);
