@@ -18,6 +18,8 @@ import fr.aquillet.kiwi.toolkit.rx.RxUtils;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -158,8 +160,9 @@ public class JnaService {
         return Native.toString(buffer);
     }
 
-    public Rectangle getForegroundWindowBounds() {
-        return WindowUtils.getWindowLocationAndSize(getActiveWindow());
+    public Bounds getForegroundWindowBounds() {
+        Rectangle rect = WindowUtils.getWindowLocationAndSize(getActiveWindow());
+        return new BoundingBox(rect.getX(), rect.getMinY(), rect.getWidth(), rect.getHeight());
     }
 
     private HWND getActiveWindow() {

@@ -6,14 +6,14 @@ import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import de.saxsys.mvvmfx.utils.viewlist.CachedViewModelCellFactory;
-import fr.aquillet.kiwi.model.Capture;
 import fr.aquillet.kiwi.command.Commands;
+import fr.aquillet.kiwi.model.Capture;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import fr.aquillet.kiwi.ui.view.label.LabelListView;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModelConverter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
@@ -23,8 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -34,10 +32,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Optional;
 
 public class CreateScenarioView implements FxmlView<CreateScenarioViewModel> {
@@ -125,17 +120,8 @@ public class CreateScenarioView implements FxmlView<CreateScenarioViewModel> {
             scene.setOnKeyReleased(event -> {
                 if (event.getCode() == KeyCode.ENTER) {
                     Bounds bounds = rubberBandSelection.getBounds();
-                    PixelReader reader = image.getPixelReader();
-                    WritableImage croppedImage = new WritableImage(reader, (int) bounds.getMinX(), (int) bounds.getMinY(),
-                            (int) bounds.getWidth(), (int) bounds.getHeight());
-
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    try {
-                        ImageIO.write(SwingFXUtils.fromFXImage(croppedImage, null), "png", baos);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Capture capture = new Capture((int) bounds.getWidth(), (int) bounds.getHeight(), (int) bounds.getMinX(), (int) bounds.getMinY(), baos.toByteArray());
+                    Image croppedImage = ImageUtil.cropImage(image, (int) bounds.getMinX(), (int) bounds.getMinY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+                    Capture capture = new Capture((int) bounds.getWidth(), (int) bounds.getHeight(), (int) bounds.getMinX(), (int) bounds.getMinY(), ImageUtil.convertImageToByteArray(croppedImage));
                     viewModel.captureProperty().set(capture);
                     captureView.setImage(croppedImage);
                     stage.close();

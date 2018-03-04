@@ -16,6 +16,7 @@ import fr.aquillet.kiwi.model.Capture;
 import fr.aquillet.kiwi.model.IScenarioEvent;
 import fr.aquillet.kiwi.model.ScenarioNativeEvent;
 import fr.aquillet.kiwi.toolkit.rx.RxUtils;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import javafx.beans.binding.Bindings;
@@ -23,13 +24,10 @@ import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -151,13 +149,8 @@ public class CreateScenarioViewModel implements ViewModel {
     }
 
     private void takeScreenShot() {
-        try {
-            BufferedImage screenCapture = new Robot().createScreenCapture(jnaService.getForegroundWindowBounds());
-            Image image = SwingFXUtils.toFXImage(screenCapture, null);
-            screenshot.set(image);
-        } catch (HeadlessException | AWTException e) {
-            e.printStackTrace();
-        }
+        ImageUtil.takeForegroundApplicationScreenShot(jnaService.getForegroundWindowBounds()) //
+                .ifPresent(screenshot::set);
     }
 
     private Action createScenarioAction() {

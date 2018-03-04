@@ -3,20 +3,18 @@ package fr.aquillet.kiwi.ui.view.capture;
 import com.jfoenix.controls.JFXButton;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageComparisonResult;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Optional;
-import java.util.stream.IntStream;
 
 public class CaptureComparisonView implements FxmlView<CaptureComparisonViewModel> {
 
@@ -67,37 +65,17 @@ public class CaptureComparisonView implements FxmlView<CaptureComparisonViewMode
 
     private void computeComparison() {
         comparisonImageView.setImage(null);
-        if (originalImageView.getImage() == null || sourceImageView.getImage() == null) {
-            return;
-        }
         Image original = originalImageView.getImage();
         Image source = sourceImageView.getImage();
-        WritableImage comparison = new WritableImage(original.getPixelReader(), 0, 0, //
-                (int) original.getWidth(), (int) original.getHeight());
-        comparisonImageView.setImage(comparison);
-        double percent = computeSnapshotSimilarity(original, source, comparison);
+        if (original == null || source == null) {
+            return;
+        }
+
+        ImageComparisonResult imageComparisonResult = ImageUtil.compareImages(original, source);
+        comparisonImageView.setImage(imageComparisonResult.getDiffImage());
         NumberFormat instance = DecimalFormat.getInstance();
         instance.setMaximumFractionDigits(2);
-        diffLabel.setText("Similitude: " + instance.format(percent) + "%");
-    }
-
-    private double computeSnapshotSimilarity(final Image image1, final Image image2, final WritableImage diff) {
-        final int width = (int) image1.getWidth();
-        final int height = (int) image1.getHeight();
-        final PixelReader reader1 = image1.getPixelReader();
-        final PixelReader reader2 = image2.getPixelReader();
-
-        final double nbNonSimilarPixels = IntStream.range(0, width) //
-                .parallel() //
-                .mapToLong(i -> IntStream.range(0, height) //
-                        .parallel() //
-                        .filter(j -> reader1.getArgb(i, j) != reader2.getArgb(i, j)) //
-                        .peek(j -> {
-                            diff.getPixelWriter().setColor(i, j, Color.RED);
-                        }).count()) //
-                .sum();
-
-        return 100d - nbNonSimilarPixels / (width * height) * 100d;
+        diffLabel.setText("Similitude: " + instance.format(imageComparisonResult.getSimilarity()) + "%");
     }
 
 }

@@ -5,6 +5,7 @@ import de.saxsys.mvvmfx.ViewTuple;
 import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.jna.event.KeyboardEvent;
 import fr.aquillet.kiwi.model.*;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
 import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonView;
@@ -12,18 +13,12 @@ import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonViewModel;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -88,7 +83,7 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
 
             return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
                     .flatMap(appProcess -> Observable.concat(steps) //
-                            .doOnComplete(() -> compareWithCapture(scenario)) //
+                            .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
                             .doOnTerminate(appProcess::destroy)) //
                     .takeUntil(escapeSequenceObs)
                     .ignoreElements();
@@ -103,43 +98,28 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
         return Completable.complete();
     }
 
-    private void compareWithCapture(Scenario scenario) {
-        try {
-            Capture endCapture = scenario.getEndCapture();
-            WritableImage screenShot = takeScreenShot();
-            PixelReader reader = screenShot.getPixelReader();
-            WritableImage croppedImage = new WritableImage(reader, endCapture.getX(), endCapture.getY(),
-                    endCapture.getWidth(), endCapture.getHeight());
-            Image reference = new Image(new ByteArrayInputStream(endCapture.getContent()));
+    private void compareWithCapture(Capture capture) {
+        ImageUtil.takeForegroundApplicationScreenShot(jnaService.getForegroundWindowBounds()) //
+                .ifPresent(screenShot -> {
+                    Image croppedImage = ImageUtil.cropImage(screenShot, capture.getX(), capture.getY(), capture.getWidth(), capture.getHeight());
+                    Image reference = ImageUtil.createImageFrom(capture.getContent());
 
-            Platform.runLater(() -> {
-                Stage stage = new Stage();
-                stage.setTitle("Résultat du scénario");
-                ViewTuple<CaptureComparisonView, CaptureComparisonViewModel> viewTuple = FluentViewLoader
-                        .fxmlView(CaptureComparisonView.class).load();
-                viewTuple.getViewModel().originalProperty().set(reference);
-                viewTuple.getViewModel().sourceProperty().set(croppedImage);
-                Scene scene = new Scene(viewTuple.getView());
-                scene.getStylesheets().add("style/default-style.css");
-                stage.setScene(scene);
-                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/kiwi_logo.png")));
-                stage.setResizable(false);
-                stage.show();
+                    Platform.runLater(() -> {
+                        Stage stage = new Stage();
+                        stage.setTitle("Résultat du scénario");
+                        ViewTuple<CaptureComparisonView, CaptureComparisonViewModel> viewTuple = FluentViewLoader
+                                .fxmlView(CaptureComparisonView.class).load();
+                        viewTuple.getViewModel().originalProperty().set(reference);
+                        viewTuple.getViewModel().sourceProperty().set(croppedImage);
+                        Scene scene = new Scene(viewTuple.getView());
+                        scene.getStylesheets().add("style/default-style.css");
+                        stage.setScene(scene);
+                        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/kiwi_logo.png")));
+                        stage.setResizable(false);
+                        stage.show();
 
-            });
-
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+                    });
+                });
     }
 
-    private WritableImage takeScreenShot() {
-        try {
-            BufferedImage screenCapture = new Robot().createScreenCapture(jnaService.getForegroundWindowBounds());
-            return SwingFXUtils.toFXImage(screenCapture, null);
-        } catch (HeadlessException | AWTException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
