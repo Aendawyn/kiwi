@@ -11,8 +11,8 @@ import javafx.scene.shape.StrokeLineCap;
 
 public class RubberBandSelectionNode extends Group {
 
-    private static final Color SELECTION_STROKE_COLOR = Color.BLUE;
-    private static final Color SELECTION_FILL_COLOR = Color.LIGHTBLUE.deriveColor(0, 1.3, 1, 0.5);
+    private static final Color SELECTION_STROKE_COLOR = Color.rgb(45, 140, 95);
+    private static final Color SELECTION_FILL_COLOR = Color.rgb(248, 255, 244, 0.4d);
     private static final double SELECTION_STROKE_WIDTH = 1d;
 
     private final DragContext dragContext = new DragContext();
