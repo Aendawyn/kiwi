@@ -14,5 +14,7 @@ public interface IPersistenceConfiguration {
 
     String getScenariosDirectoryName();
 
+    String getCampaignsDirectoryName();
+
     String getFileExtension();
 }

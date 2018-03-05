@@ -2,10 +2,7 @@ package fr.aquillet.kiwi.ui.module;
 
 import com.google.inject.AbstractModule;
 
-import fr.aquillet.kiwi.ui.controller.ApplicationController;
-import fr.aquillet.kiwi.ui.controller.LabelController;
-import fr.aquillet.kiwi.ui.controller.LauncherController;
-import fr.aquillet.kiwi.ui.controller.ScenarioController;
+import fr.aquillet.kiwi.ui.controller.*;
 
 public class ControllerModule extends AbstractModule {
 
@@ -15,6 +12,7 @@ public class ControllerModule extends AbstractModule {
 		bind(LauncherController.class).toInstance(new LauncherController());
 		bind(LabelController.class).toInstance(new LabelController());
 		bind(ScenarioController.class).toInstance(new ScenarioController());
+		bind(CampaignController.class).toInstance(new CampaignController());
 	}
 
 }

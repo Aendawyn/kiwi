@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<BorderPane prefHeight="100.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.141"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fr.aquillet.kiwi.ui.view.campaign.creation.CreateCampaignView">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="400.0" styleClass="dialog-title"
+              BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Créer une nouvelle campagne"/>
+            </children>
+            <padding>
+                <Insets left="10.0" right="10.0"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" prefHeight="0.0" prefWidth="0.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Nom de la campagne"/>
+                <JFXTextField fx:id="campaignTitleField"/>
+                <Label text="Etiquette de la campagne (optionnel)"/>
+                <JFXComboBox fx:id="campaignLabelBox"/>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                    <children>
+                        <JFXButton fx:id="createCampaignButton" styleClass="button-raised" text="Créer"
+                                   onAction="#createCampaignButtonPressed"/>
+                        <JFXButton fx:id="cancelButton" text="Annuler" onAction="#cancelButtonPressed">
+                            <styleClass>
+                                <String fx:value="red"/>
+                                <String fx:value="button-raised"/>
+                            </styleClass>
+                        </JFXButton>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="30.0" right="30.0" top="10.0"/>
+                    </padding>
+                </HBox>
+            </children>
+            <BorderPane.margin>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="20.0"/>
+            </BorderPane.margin>
+        </VBox>
+    </center>
+
+</BorderPane>

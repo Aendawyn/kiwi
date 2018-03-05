@@ -12,8 +12,7 @@
             <JFXTabPane>
                 <fx:include source="./application/DashboardApplicationView.fxml"/>
                 <fx:include source="./scenario/DashboardScenarioView.fxml"/>
-                <Tab text="Campagnes">
-                </Tab>
+                <fx:include source="./campaign/DashboardCampaignView.fxml"/>
             </JFXTabPane>
         </center>
     </BorderPane>

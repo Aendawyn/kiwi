@@ -6,5 +6,6 @@ public interface Events {
 	String LAUNCHER = "EVENT_LAUNCHER";
 	String LABEL = "EVENT_LABEL";
 	String SCENARIO = "EVENT_SCENARIO";
+	String CAMPAIGN = "EVENT_CAMPAIGN";
 
 }

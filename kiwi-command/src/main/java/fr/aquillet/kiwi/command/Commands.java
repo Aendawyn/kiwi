@@ -11,5 +11,6 @@ public interface Commands {
 	String LAUNCHER = "COMMAND_LAUNCHER";
 	String LABEL = "COMMAND_LABEL";
 	String SCENARIO = "COMMAND_SCENARIO";
+	String CAMPAIGN = "COMMAND_CAMPAIGN";
 
 }

@@ -1,11 +1,11 @@
 package fr.aquillet.kiwi.ui.view.label;
 
-import java.util.Objects;
-
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+
+import java.util.Objects;
 
 public class LabelView extends HBox {
 
@@ -14,6 +14,7 @@ public class LabelView extends HBox {
 
 	public LabelView() {
 		getChildren().add(titleLabel);
+		setPrefHeight(25);
 		titleLabel.getStyleClass().add("label-node");
 		setPadding(new Insets(3d));
 	}

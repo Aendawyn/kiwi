@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.Glyph?>
+<Tab xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" text="Campagne"
+     fx:controller="fr.aquillet.kiwi.ui.view.dashboard.campaign.DashboardCampaignView">
+    <VBox alignment="CENTER" spacing="10">
+        <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS">
+            <JFXButton fx:id="addCampaignButton" prefWidth="40.0" styleClass="button-raised"
+                       onAction="#addCampaignButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
+        </HBox>
+        <JFXTreeTableView fx:id="campaignsTable">
+            <columns>
+                <JFXTreeTableColumn fx:id="campaignNameColumn" text="Nom" editable="false" prefWidth="300"
+                                    resizable="false"/>
+                <JFXTreeTableColumn fx:id="campaignLabelColumn" text="Etiquette" editable="false" prefWidth="130"
+                                    resizable="false"/>
+                <JFXTreeTableColumn fx:id="campaignScenariosCountColumn" text="Nombre de scénarios" editable="false"
+                                    prefWidth="160" resizable="false"/>
+                <JFXTreeTableColumn fx:id="campaignDurationColumn" text="Durée (s)" editable="false" prefWidth="140"
+                                    resizable="false"/>
+                <JFXTreeTableColumn fx:id="campaignRunColumn" text="Lancer" editable="false" prefWidth="60"
+                                    resizable="false"/>
+            </columns>
+        </JFXTreeTableView>
+    </VBox>
+</Tab>

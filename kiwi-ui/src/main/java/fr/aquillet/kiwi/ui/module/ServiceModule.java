@@ -6,6 +6,8 @@ import fr.aquillet.kiwi.toolkit.ui.dialog.DialogService;
 import fr.aquillet.kiwi.toolkit.ui.dialog.IDialogService;
 import fr.aquillet.kiwi.ui.service.application.ApplicationService;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
+import fr.aquillet.kiwi.ui.service.campaign.CampaignService;
+import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
 import fr.aquillet.kiwi.ui.service.executor.IScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.executor.ScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
@@ -24,6 +26,7 @@ public class ServiceModule extends AbstractModule {
 		bind(ILauncherService.class).to(LauncherService.class).asEagerSingleton();
 		bind(ILabelService.class).to(LabelService.class).asEagerSingleton();
 		bind(IScenarioService.class).to(ScenarioService.class).asEagerSingleton();
+		bind(ICampaignService.class).to(CampaignService.class).asEagerSingleton();
 		bind(DialogService.class).toInstance(new DialogService());
 		bind(JnaService.class).toInstance(new JnaService());
 		bind(IScenarioExecutorService.class).toInstance(new ScenarioExecutorService());

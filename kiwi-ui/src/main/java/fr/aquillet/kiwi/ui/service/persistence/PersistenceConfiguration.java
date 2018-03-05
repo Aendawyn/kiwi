@@ -34,6 +34,11 @@ public class PersistenceConfiguration implements IPersistenceConfiguration {
     }
 
     @Override
+    public String getCampaignsDirectoryName() {
+        return "campaigns";
+    }
+
+    @Override
     public String getFileExtension() {
         return ".json";
     }

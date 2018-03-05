@@ -12,5 +12,6 @@ public class PersistenceModule extends AbstractModule {
         bind(ILauncherPersistenceService.class).toInstance(new LauncherPersistenceService());
         bind(ILabelPersistenceService.class).toInstance(new LabelPersistenceService());
         bind(IScenarioPersistenceService.class).toInstance(new ScenarioPersistenceService());
+        bind(ICampaignPersistenceService.class).toInstance(new CampaignPersistenceService());
     }
 }
