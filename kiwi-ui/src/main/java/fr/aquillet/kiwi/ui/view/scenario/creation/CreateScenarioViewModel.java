@@ -8,10 +8,7 @@ import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.command.scenario.CreateScenarioCommand;
 import fr.aquillet.kiwi.jna.JnaService;
-import fr.aquillet.kiwi.jna.event.INativeEvent;
-import fr.aquillet.kiwi.jna.event.KeyboardEvent;
-import fr.aquillet.kiwi.jna.event.KeyboardEventType;
-import fr.aquillet.kiwi.jna.event.PauseEvent;
+import fr.aquillet.kiwi.jna.event.*;
 import fr.aquillet.kiwi.model.Capture;
 import fr.aquillet.kiwi.model.IScenarioEvent;
 import fr.aquillet.kiwi.model.ScenarioNativeEvent;
@@ -116,6 +113,11 @@ public class CreateScenarioViewModel implements ViewModel {
             protected void action() throws Exception {
                 notificationCenter.publish(Commands.HIDE_APPLICATION);
                 jnaService.getNativeEventsStream() //
+                        .doOnNext(event -> {
+                            if (event instanceof KeyboardEvent) {
+                                log.debug("Keyboard event received: {}", event);
+                            }
+                        }) //
                         .skipWhile(event -> { //
                             if (!(event instanceof KeyboardEvent)) {
                                 return true;
