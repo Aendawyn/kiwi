@@ -47,6 +47,11 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
 
     @Override
     public Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor) {
+        return executeScenario(launcherId, scenarioId, speedFactor, false);
+    }
+
+    @Override
+    public Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive) {
         return Completable.defer(() -> {
             Optional<Launcher> launcherOpt = launcherService.getLauncherById(launcherId);
             Optional<Scenario> scenarioOpt = scenarioService.getScenarioById(scenarioId);
@@ -80,12 +85,21 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
                         return Observable.empty();
                     });
 
-            return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
-                    .flatMap(appProcess -> Observable.concat(steps) //
-                            .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
-                            .doOnTerminate(appProcess::destroy)) //
-                    .takeUntil(escapeSequenceObs)
-                    .ignoreElements();
+            if (launcherAlreadyActive) {
+                return jnaService.bringApplicationForeground(launcher.getWindowTitle())
+                        .andThen(Observable.concat(steps) //
+                                .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
+                                .takeUntil(escapeSequenceObs)
+                                .ignoreElements());
+            } else {
+                return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
+                        .flatMap(appProcess -> Observable.concat(steps) //
+                                .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
+                                .doOnTerminate(appProcess::destroy)) //
+                        .takeUntil(escapeSequenceObs)
+                        .ignoreElements();
+            }
+
         });
     }
 

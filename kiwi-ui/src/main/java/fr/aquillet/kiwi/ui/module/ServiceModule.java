@@ -8,6 +8,8 @@ import fr.aquillet.kiwi.ui.service.application.ApplicationService;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.campaign.CampaignService;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
+import fr.aquillet.kiwi.ui.service.executor.CampaignExecutorService;
+import fr.aquillet.kiwi.ui.service.executor.ICampaignExecutorService;
 import fr.aquillet.kiwi.ui.service.executor.IScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.executor.ScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.label.ILabelService;
@@ -30,6 +32,7 @@ public class ServiceModule extends AbstractModule {
 		bind(DialogService.class).toInstance(new DialogService());
 		bind(JnaService.class).toInstance(new JnaService());
 		bind(IScenarioExecutorService.class).toInstance(new ScenarioExecutorService());
+		bind(ICampaignExecutorService.class).toInstance(new CampaignExecutorService());
 	}
 
 }
