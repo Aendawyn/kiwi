@@ -24,7 +24,7 @@ public class CampaignViewModel extends RecursiveTreeObject<CampaignViewModel> im
     private ObjectProperty<Optional<LabelListViewModel>> label = new SimpleObjectProperty<>();
     private IntegerProperty scenariosCount = new SimpleIntegerProperty();
     private ObservableList<ScenarioViewModel> scenarios = FXCollections.observableArrayList();
-    private LongProperty durationSeconds = new SimpleLongProperty();
+    private LongProperty durationMs = new SimpleLongProperty();
 
     private ILabelService labelService;
     private IScenarioService scenarioService;
@@ -49,8 +49,8 @@ public class CampaignViewModel extends RecursiveTreeObject<CampaignViewModel> im
                 .map(ScenarioViewModel::new) //
                 .collect(Collectors.toList()));
         scenariosCount.set(scenarios.size());
-        durationSeconds.set(scenarios.stream() //
-                .map(ScenarioViewModel::durationSecondsProperty) //
+        durationMs.set(scenarios.stream() //
+                .map(ScenarioViewModel::durationMsProperty) //
                 .mapToLong(LongProperty::getValue) //
                 .sum());
     }
@@ -71,8 +71,8 @@ public class CampaignViewModel extends RecursiveTreeObject<CampaignViewModel> im
         return scenariosCount;
     }
 
-    public LongProperty durationSecondsProperty() {
-        return durationSeconds;
+    public LongProperty durationMsProperty() {
+        return durationMs;
     }
 
     public ObservableList<ScenarioViewModel> scenariosProperty() {

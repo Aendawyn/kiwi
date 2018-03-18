@@ -21,7 +21,7 @@ public class ScenarioViewModel extends RecursiveTreeObject<ScenarioViewModel> im
     private StringProperty title = new SimpleStringProperty();
     private ObjectProperty<Optional<LabelListViewModel>> label = new SimpleObjectProperty<>();
     private IntegerProperty stepsCount = new SimpleIntegerProperty();
-    private LongProperty durationSeconds = new SimpleLongProperty();
+    private LongProperty durationMs = new SimpleLongProperty();
 
     private ILabelService labelService;
 
@@ -38,8 +38,9 @@ public class ScenarioViewModel extends RecursiveTreeObject<ScenarioViewModel> im
                 .flatMap(id -> labelService.getLabelById(UUID.fromString(id))) //
                 .map(LabelListViewModel::new));
         stepsCount.set(scenario.getEvents().size());
-        durationSeconds.set(scenario.getEvents().stream() //
-                .mapToLong(IScenarioEvent::getTime).sum());
+        durationMs.set(scenario.getEvents().stream() //
+                .mapToLong(IScenarioEvent::getTime)
+                .sum());
     }
 
     public ReadOnlyObjectProperty<UUID> idProperty() {
@@ -58,8 +59,8 @@ public class ScenarioViewModel extends RecursiveTreeObject<ScenarioViewModel> im
         return stepsCount;
     }
 
-    public LongProperty durationSecondsProperty() {
-        return durationSeconds;
+    public LongProperty durationMsProperty() {
+        return durationMs;
     }
 
     @Override

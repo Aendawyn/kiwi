@@ -7,6 +7,8 @@ import fr.aquillet.kiwi.command.campaign.ReloadCampaignsCommand;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.campaign.CampaignCreatedEvent;
 import fr.aquillet.kiwi.event.campaign.CampaignsReloadedEvent;
+import fr.aquillet.kiwi.event.campaign.ScenarioAddedToCampaignEvent;
+import fr.aquillet.kiwi.event.campaign.ScenarioRemovedFromCampaignEvent;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
@@ -44,6 +46,16 @@ public class DashboardCampaignViewModel implements ViewModel {
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
     public void handle(CampaignsReloadedEvent event) {
+        reloadCampaigns();
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(ScenarioAddedToCampaignEvent event) {
+        reloadCampaigns();
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(ScenarioRemovedFromCampaignEvent event) {
         reloadCampaigns();
     }
 

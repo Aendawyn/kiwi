@@ -81,7 +81,7 @@ public class DashboardCampaignView implements FxmlView<DashboardCampaignViewMode
         });
         campaignDurationColumn.setCellValueFactory(param -> {
             if (campaignDurationColumn.validateValue(param)) {
-                return param.getValue().getValue().durationSecondsProperty();
+                return param.getValue().getValue().durationMsProperty().divide(1000d);
             }
             return campaignDurationColumn.getComputedValue(param);
         });
