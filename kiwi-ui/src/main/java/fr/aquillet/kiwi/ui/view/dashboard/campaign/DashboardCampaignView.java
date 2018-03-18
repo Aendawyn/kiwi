@@ -11,12 +11,15 @@ import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.ui.view.campaign.CampaignViewModel;
 import fr.aquillet.kiwi.ui.view.campaign.creation.CreateCampaignView;
+import fr.aquillet.kiwi.ui.view.campaign.edition.EditCampaignView;
 import fr.aquillet.kiwi.ui.view.label.LabelView;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseButton;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class DashboardCampaignView implements FxmlView<DashboardCampaignViewModel> {
 
@@ -47,6 +50,13 @@ public class DashboardCampaignView implements FxmlView<DashboardCampaignViewMode
                 RecursiveTreeObject::getChildren);
         campaignsTable.setRoot(root);
         campaignsTable.setShowRoot(false);
+        campaignsTable.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                Optional.ofNullable(campaignsTable.getSelectionModel().getSelectedItem()) //
+                        .ifPresent(selectedItem -> notificationCenter.publish(Commands.OPEN_DIALOG_IN_PARENT, //
+                                EditCampaignView.class, selectedItem.getValue().idProperty().get()));
+            }
+        });
 
         campaignNameColumn.setCellValueFactory(param -> {
             if (campaignNameColumn.validateValue(param)) {

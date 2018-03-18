@@ -3,6 +3,9 @@ package fr.aquillet.kiwi.ui.service.persistence;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.campaign.CampaignCreatedEvent;
+import fr.aquillet.kiwi.event.campaign.CampaignScenariosReorderedEvent;
+import fr.aquillet.kiwi.event.campaign.ScenarioAddedToCampaignEvent;
+import fr.aquillet.kiwi.event.campaign.ScenarioRemovedFromCampaignEvent;
 import fr.aquillet.kiwi.model.Application;
 import fr.aquillet.kiwi.model.Campaign;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
@@ -54,6 +57,21 @@ public class CampaignPersistenceService implements ICampaignPersistenceService {
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
     public void handle(CampaignCreatedEvent event) {
         saveCampaign(event.getCampaign().getId());
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(CampaignScenariosReorderedEvent event) {
+        saveCampaign(event.getCampaignId());
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(ScenarioAddedToCampaignEvent event) {
+        saveCampaign(event.getCampaignId());
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(ScenarioRemovedFromCampaignEvent event) {
+        saveCampaign(event.getCampaignId());
     }
 
     private void saveCampaign(UUID campaignId) {
