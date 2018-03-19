@@ -1,0 +1,13 @@
+
+description = ''
+dependencies {
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version:'2.1.8'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjavafx', version:'2.2.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version:'2.9.2'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version:'2.9.2'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.25'
+    compile group: 'org.projectlombok', name: 'lombok', version:'1.16.20'
+}

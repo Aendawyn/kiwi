@@ -1,0 +1,18 @@
+
+description = ''
+dependencies {
+  compile project(':kiwi-jna')
+  compile project(':kiwi-model')
+  compile project(':kiwi-event')
+  compile project(':kiwi-command')
+  compile project(':kiwi-toolkit')
+  compile project(':kiwi-toolkit-ui')
+    compile group: 'de.saxsys', name: 'mvvmfx', version:'1.7.0'
+    compile group: 'de.saxsys', name: 'mvvmfx-guice', version:'1.7.0'
+    compile group: 'com.jfoenix', name: 'jfoenix', version:'8.0.1'
+    compile group: 'org.controlsfx', name: 'controlsfx', version:'8.40.14'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjavafx', version:'2.2.2'
+    compile group: 'javax.inject', name: 'javax.inject', version:'1'
+    compile group: 'org.projectlombok', name: 'lombok', version:'1.16.20'
+    runtime group: 'ch.qos.logback', name: 'logback-classic', version:'1.2.3'
+}
