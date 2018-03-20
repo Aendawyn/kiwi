@@ -7,4 +7,6 @@ import java.util.UUID;
 public interface IScenarioExecutorService {
 
     Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor);
+
+    Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive);
 }

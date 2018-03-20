@@ -1,18 +1,7 @@
 package fr.aquillet.kiwi.ui.view.dashboard.scenario;
 
-import javax.inject.Inject;
-
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
-
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.*;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
 import de.saxsys.mvvmfx.utils.commands.Command;
@@ -28,6 +17,10 @@ import fr.aquillet.kiwi.ui.view.scenario.creation.CreateScenarioView;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
+
+import javax.inject.Inject;
 
 public class DashboardScenarioView implements FxmlView<DashboardScenarioViewModel> {
 
@@ -99,7 +92,7 @@ public class DashboardScenarioView implements FxmlView<DashboardScenarioViewMode
 		});
 		scenarioDurationColumn.setCellValueFactory(param -> {
 			if (scenarioDurationColumn.validateValue(param)) {
-				return param.getValue().getValue().durationSecondsProperty().divide(1000).divide(replaySpeedSlider.valueProperty());
+				return param.getValue().getValue().durationMsProperty().divide(1000d).divide(replaySpeedSlider.valueProperty());
 			}
 			return scenarioDurationColumn.getComputedValue(param);
 		});

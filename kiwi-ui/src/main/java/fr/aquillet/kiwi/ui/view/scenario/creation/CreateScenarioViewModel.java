@@ -115,7 +115,7 @@ public class CreateScenarioViewModel implements ViewModel {
                 jnaService.getNativeEventsStream() //
                         .doOnNext(event -> {
                             if (event instanceof KeyboardEvent) {
-                                log.debug("Keyboard event received: {}", event);
+                                log.trace("Keyboard event received: {}", event);
                             }
                         }) //
                         .skipWhile(event -> { //

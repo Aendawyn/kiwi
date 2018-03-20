@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.Glyph?>
 <Tab xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" text="Campagne"
      fx:controller="fr.aquillet.kiwi.ui.view.dashboard.campaign.DashboardCampaignView">
     <VBox alignment="CENTER" spacing="10">
         <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS">
+            <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" HBox.hgrow="ALWAYS">
+                <Label text="Launcher actif: "/>
+                <JFXComboBox fx:id="activeLauncherBox"/>
+            </HBox>
             <JFXButton fx:id="addCampaignButton" prefWidth="40.0" styleClass="button-raised"
                        onAction="#addCampaignButtonPressed">
                 <graphic>
