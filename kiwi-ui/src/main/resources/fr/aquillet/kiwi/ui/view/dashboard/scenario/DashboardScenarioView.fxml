@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.*?>
@@ -8,7 +9,11 @@
 <Tab xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" text="Scenario"
      fx:controller="fr.aquillet.kiwi.ui.view.dashboard.scenario.DashboardScenarioView">
     <VBox alignment="CENTER" spacing="10">
-        <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS">
+        <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS"
+              spacing="10">
+            <padding>
+                <Insets left="10" right="10"/>
+            </padding>
             <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" HBox.hgrow="ALWAYS">
                 <Label text="Launcher actif: "/>
                 <JFXComboBox fx:id="activeLauncherBox"/>
@@ -17,14 +22,24 @@
                 <Label text="Vitesse de rejeu: "/>
                 <JFXSlider fx:id="replaySpeedSlider"/>
             </HBox>
-            <children>
-                <JFXButton fx:id="addScenarioButton" prefWidth="40.0" styleClass="button-raised"
-                           onAction="#addScenarioButtonPressed">
-                    <graphic>
-                        <Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph"/>
-                    </graphic>
-                </JFXButton>
-            </children>
+            <JFXButton fx:id="runScenarioButton" prefWidth="40.0" styleClass="button-raised"
+                       onAction="#runScenarioButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="PLAY" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
+            <JFXButton fx:id="deleteScenarioButton" prefWidth="40.0" styleClass="button-raised, red"
+                       onAction="#deleteScenarioButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="TRASH" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
+            <JFXButton fx:id="addScenarioButton" prefWidth="40.0" styleClass="button-raised"
+                       onAction="#addScenarioButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="PLUS" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
         </HBox>
         <JFXTreeTableView fx:id="scenariosTable">
             <columns>
@@ -35,8 +50,6 @@
                 <JFXTreeTableColumn fx:id="scenarioStepsCountColumn" text="Nombre d'étapes" editable="false"
                                     prefWidth="160" resizable="false"/>
                 <JFXTreeTableColumn fx:id="scenarioDurationColumn" text="Durée (s)" editable="false" prefWidth="140"
-                                    resizable="false"/>
-                <JFXTreeTableColumn fx:id="scenarioRunColumn" text="Lancer" editable="false" prefWidth="60"
                                     resizable="false"/>
             </columns>
         </JFXTreeTableView>

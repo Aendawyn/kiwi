@@ -3,9 +3,11 @@ package fr.aquillet.kiwi.ui.controller;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.command.scenario.CreateScenarioCommand;
+import fr.aquillet.kiwi.command.scenario.DeleteScenarioCommand;
 import fr.aquillet.kiwi.command.scenario.ReloadScenariosCommand;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
+import fr.aquillet.kiwi.event.scenario.ScenarioDeletedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenariosReloadedEvent;
 import fr.aquillet.kiwi.model.Scenario;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
@@ -54,6 +56,13 @@ public class ScenarioController {
                 scenario.getEvents().size());
         scenarioService.getScenarios().add(scenario);
         notificationCenter.publish(Events.SCENARIO, new ScenarioCreatedEvent(scenario));
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_CONTROLLER)
+    public void handle(DeleteScenarioCommand command) {
+        log.info("Deleting scenario {}", command.getId());
+        scenarioService.getScenarios().removeIf(scenario -> scenario.getId().equals(command.getId()));
+        notificationCenter.publish(Events.SCENARIO, new ScenarioDeletedEvent(command.getId()));
     }
 
 }
