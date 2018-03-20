@@ -13,14 +13,17 @@ subprojects {
   	options.encoding = 'UTF-8'
   }
 
-  
-  repositories {
-    mavenLocal()
-    
-    maven { url "http://repo.maven.apache.org/maven2" }
-  }
 
-  
-  
-  
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.16.20'
+    }
+
+
+
 }
