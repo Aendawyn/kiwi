@@ -3,6 +3,7 @@ package fr.aquillet.kiwi.ui.service.persistence;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
+import fr.aquillet.kiwi.event.scenario.ScenarioDeletedEvent;
 import fr.aquillet.kiwi.model.Application;
 import fr.aquillet.kiwi.model.Scenario;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
@@ -10,12 +11,14 @@ import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
 import fr.aquillet.kiwi.toolkit.jackson.JacksonUtil;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ScenarioPersistenceService implements IScenarioPersistenceService {
 
     private IPersistenceConfiguration configuration;
@@ -56,8 +59,17 @@ public class ScenarioPersistenceService implements IScenarioPersistenceService {
         saveScenario(event.getScenario().getId());
     }
 
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(ScenarioDeletedEvent event) {
+        deleteScenario(event.getId());
+    }
+
     private void saveScenario(UUID scenarioId) {
         Optional.ofNullable(applicationService.getCurrentApplication()).ifPresent(application -> saveScenario(application, scenarioId));
+    }
+
+    private void deleteScenario(UUID scenarioId) {
+        Optional.ofNullable(applicationService.getCurrentApplication()).ifPresent(application -> deleteScenario(application, scenarioId));
     }
 
     private void saveScenario(Application application, UUID scenarioId) {
@@ -65,13 +77,23 @@ public class ScenarioPersistenceService implements IScenarioPersistenceService {
                 .ifPresent(scenario -> JacksonUtil.write(scenario, Scenario.class, new File(getScenariosDirectory(application), getScenarioFileName(scenario))));
     }
 
+    private void deleteScenario(Application application, UUID scenarioId) {
+        File file = new File(getScenariosDirectory(application), getScenarioFileName(scenarioId));
+        if (!file.delete()) {
+            log.error("Unable to delete file {}", file.getAbsolutePath());
+        }
+    }
+
     private File getScenariosDirectory(Application application) {
         return new File(applicationPersistenceService.getApplicationDirectory(application), configuration.getScenariosDirectoryName());
     }
 
     private String getScenarioFileName(Scenario scenario) {
-        return scenario.getId().toString() + configuration.getFileExtension();
+        return getScenarioFileName(scenario.getId());
     }
 
+    private String getScenarioFileName(UUID scenarioId) {
+        return scenarioId.toString() + configuration.getFileExtension();
+    }
 
 }

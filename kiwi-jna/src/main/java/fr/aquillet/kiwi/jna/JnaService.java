@@ -57,6 +57,9 @@ public class JnaService {
         return Observable.defer(() -> {
             ProcessBuilder builder = new ProcessBuilder(command);
             builder.directory(new File(workingDirectory));
+            if (log.isDebugEnabled()) {
+                builder.inheritIO();
+            }
             return Observable.just(builder.start()).delay(delaySec, TimeUnit.SECONDS);
         }).observeOn(Schedulers.io());
     }

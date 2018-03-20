@@ -12,6 +12,7 @@ import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.launcher.LauncherCreatedEvent;
 import fr.aquillet.kiwi.event.launcher.LaunchersReloadedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
+import fr.aquillet.kiwi.event.scenario.ScenarioDeletedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenariosReloadedEvent;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
@@ -78,6 +79,11 @@ public class DashboardScenarioViewModel implements ViewModel {
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
     public void handle(ScenariosReloadedEvent event) {
+        reloadScenarios();
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(ScenarioDeletedEvent event) {
         reloadScenarios();
     }
 

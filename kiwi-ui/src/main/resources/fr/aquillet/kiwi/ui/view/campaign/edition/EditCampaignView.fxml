@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.glyphfont.Glyph?>
+
+<BorderPane maxHeight="400.0" maxWidth="500.0" minHeight="400.0" minWidth="500.0" prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.aquillet.kiwi.ui.view.campaign.edition.EditCampaignView">
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="35.0" prefWidth="400.0" styleClass="dialog-title" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets left="10.0" right="10.0" />
+            </padding>
+            <Label text="Editer une campaigne" />
+        </HBox>
+    </top>
+
+    <center>
+        <VBox>
+            <HBox VBox.vgrow="ALWAYS">
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Scénarios disponibles" />
+                    <JFXListView fx:id="availableScenariosListView" VBox.vgrow="ALWAYS" />
+                </VBox>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <Label text="&lt;-&gt;" />
+                </VBox>
+                <VBox HBox.hgrow="ALWAYS">
+                    <Label text="Scénarios de la campagne" />
+                    <JFXListView fx:id="campaignScenariosListView" VBox.vgrow="ALWAYS" />
+                </VBox>
+                <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <JFXButton fx:id="moveScenarioUp" styleClass="button-raised">
+                        <graphic>
+                            <Glyph fontFamily="FontAwesome" icon="ARROW_UP" styleClass="light-glyph" />
+                        </graphic>
+                    </JFXButton>
+                    <JFXButton fx:id="moveScenarioDown" styleClass="button-raised">
+                        <graphic>
+                            <Glyph fontFamily="FontAwesome" icon="ARROW_DOWN" styleClass="light-glyph" />
+                        </graphic>
+                    </JFXButton>
+                </VBox>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+                <padding>
+                    <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+                </padding>
+                <JFXButton onAction="#closeButtonPressed" text="Fermer">
+                    <styleClass>
+                        <String fx:value="red" />
+                        <String fx:value="button-raised" />
+                    </styleClass>
+                </JFXButton>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
