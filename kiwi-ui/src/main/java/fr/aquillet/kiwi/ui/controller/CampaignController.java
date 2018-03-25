@@ -5,6 +5,7 @@ import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.command.campaign.*;
 import fr.aquillet.kiwi.event.Events;
 import fr.aquillet.kiwi.event.campaign.*;
+import fr.aquillet.kiwi.event.scenario.ScenarioDeletedEvent;
 import fr.aquillet.kiwi.model.Campaign;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
@@ -33,6 +34,7 @@ public class CampaignController {
         this.applicationService = applicationService;
         this.persistenceService = persistenceService;
         notificationCenter.subscribe(Commands.CAMPAIGN, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
+        notificationCenter.subscribe(Events.SCENARIO, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
     }
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_CONTROLLER)
@@ -88,4 +90,16 @@ public class CampaignController {
         campaignService.getCampaigns().removeIf(campaign -> campaign.getId().equals(command.getCampaignId()));
         notificationCenter.publish(Events.CAMPAIGN, new CampaignDeletedEvent(command.getCampaignId()));
     }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_CONTROLLER)
+    public void handle(ScenarioDeletedEvent event) {
+        campaignService.getCampaigns().stream() //
+                .filter(campaign -> campaign.getScenarioIds().contains(event.getId())) //
+                .forEach(campaign -> {
+                    log.info("Removing scenario {} from campaign {} (scenario has been deleted)", event.getId(), campaign.getId());
+                    campaign.getScenarioIds().remove(event.getId());
+                    notificationCenter.publish(Events.CAMPAIGN, new ScenarioRemovedFromCampaignEvent(campaign.getId(), event.getId()));
+                });
+    }
+
 }
