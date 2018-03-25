@@ -18,9 +18,7 @@ public class ScenarioListView implements FxmlView<ScenarioListViewModel> {
 
     public void initialize() {
         titleLabel.textProperty().bind(viewModel.titleProperty());
-        System.out.println(viewModel.labelProperty().get().isPresent());
         labelLabel.visibleProperty().bind(Bindings.createBooleanBinding(() -> viewModel.labelProperty().get().isPresent(), viewModel.labelProperty()));
-        System.out.println(labelLabel.visibleProperty().get());
         labelLabel.managedProperty().bind(labelLabel.visibleProperty());
         labelLabel.textProperty().bind(Bindings.createStringBinding(() -> viewModel.labelProperty().get() //
                 .map(fr.aquillet.kiwi.model.Label::getTitle)  //
