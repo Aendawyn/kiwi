@@ -11,7 +11,6 @@ import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
 import fr.aquillet.kiwi.ui.service.persistence.ICampaignPersistenceService;
-import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -23,19 +22,16 @@ public class CampaignController {
     private ICampaignService campaignService;
     private IApplicationService applicationService;
     private ICampaignPersistenceService persistenceService;
-    private IScenarioService scenarioService;
 
     @Inject
     private void setDependencies(final NotificationCenter notificationCenter, //
                                  final ICampaignService campaignService, //
                                  final IApplicationService applicationService, //
-                                 final ICampaignPersistenceService persistenceService, //
-                                 final IScenarioService scenarioService) {
+                                 final ICampaignPersistenceService persistenceService) {
         this.notificationCenter = notificationCenter;
         this.campaignService = campaignService;
         this.applicationService = applicationService;
         this.persistenceService = persistenceService;
-        this.scenarioService = scenarioService;
         notificationCenter.subscribe(Commands.CAMPAIGN, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
     }
 
@@ -84,5 +80,12 @@ public class CampaignController {
                     campaign.getScenarioIds().addAll(command.getScenarioIds());
                     notificationCenter.publish(Events.CAMPAIGN, new CampaignScenariosReorderedEvent(command.getCampaignId(), command.getScenarioIds()));
                 });
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_CONTROLLER)
+    public void handle(DeleteCampaignCommand command) {
+        log.info("Deleting campaign {}", command.getCampaignId());
+        campaignService.getCampaigns().removeIf(campaign -> campaign.getId().equals(command.getCampaignId()));
+        notificationCenter.publish(Events.CAMPAIGN, new CampaignDeletedEvent(command.getCampaignId()));
     }
 }

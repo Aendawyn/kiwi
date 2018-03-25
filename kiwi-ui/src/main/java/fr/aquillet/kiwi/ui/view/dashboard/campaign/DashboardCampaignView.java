@@ -4,12 +4,12 @@ import com.jfoenix.controls.*;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import de.saxsys.mvvmfx.FxmlView;
 import de.saxsys.mvvmfx.InjectViewModel;
-import de.saxsys.mvvmfx.utils.commands.Command;
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import de.saxsys.mvvmfx.utils.viewlist.CachedViewModelCellFactory;
 import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.ui.view.campaign.CampaignViewModel;
 import fr.aquillet.kiwi.ui.view.campaign.creation.CreateCampaignView;
+import fr.aquillet.kiwi.ui.view.campaign.deletion.DeleteCampaignView;
 import fr.aquillet.kiwi.ui.view.campaign.edition.EditCampaignView;
 import fr.aquillet.kiwi.ui.view.label.LabelView;
 import fr.aquillet.kiwi.ui.view.launcher.LauncherListView;
@@ -19,8 +19,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeItem;
 import javafx.scene.input.MouseButton;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -31,6 +29,10 @@ public class DashboardCampaignView implements FxmlView<DashboardCampaignViewMode
     private JFXComboBox<LauncherListViewModel> activeLauncherBox;
     @FXML
     private JFXButton addCampaignButton;
+    @FXML
+    private JFXButton runCampaignButton;
+    @FXML
+    private JFXButton deleteCampaignButton;
 
     @FXML
     private JFXTreeTableView<CampaignViewModel> campaignsTable;
@@ -42,8 +44,6 @@ public class DashboardCampaignView implements FxmlView<DashboardCampaignViewMode
     private JFXTreeTableColumn<CampaignViewModel, Number> campaignScenariosCountColumn;
     @FXML
     private JFXTreeTableColumn<CampaignViewModel, Number> campaignDurationColumn;
-    @FXML
-    private JFXTreeTableColumn<CampaignViewModel, JFXButton> campaignRunColumn;
 
     @Inject
     private NotificationCenter notificationCenter;
@@ -96,24 +96,25 @@ public class DashboardCampaignView implements FxmlView<DashboardCampaignViewMode
             }
             return campaignDurationColumn.getComputedValue(param);
         });
-        campaignRunColumn.setCellValueFactory(param -> {
-            if (campaignRunColumn.validateValue(param)) {
-                JFXButton runButton = new JFXButton();
-                runButton.prefWidth(40D);
-                runButton.getStyleClass().add("button-raised");
-                Glyph glyph = new Glyph("FontAwesome", FontAwesome.Glyph.PLAY);
-                glyph.getStyleClass().add("light-glyph");
-                runButton.setGraphic(glyph);
-                Command campaignCommand = viewModel.runCampaignCommand(param.getValue().getValue());
-                runButton.setOnAction(e -> campaignCommand.execute());
-                runButton.disableProperty().bind(campaignCommand.notExecutableProperty());
-                return new SimpleObjectProperty<>(runButton);
-            }
-            return campaignRunColumn.getComputedValue(param);
-        });
+
+        runCampaignButton.disableProperty().bind(campaignsTable.getSelectionModel().selectedItemProperty().isNull() //
+                .or(viewModel.selectedLauncherProperty().isNull()));
+        deleteCampaignButton.disableProperty().bind(campaignsTable.getSelectionModel().selectedItemProperty().isNull());
     }
 
+    @FXML
     public void addCampaignButtonPressed() {
         notificationCenter.publish(Commands.OPEN_DIALOG_IN_PARENT, CreateCampaignView.class);
+    }
+
+    @FXML
+    public void deleteCampaignButtonPressed() {
+        notificationCenter.publish(Commands.OPEN_DIALOG_IN_PARENT, DeleteCampaignView.class, //
+                campaignsTable.getSelectionModel().selectedItemProperty().get().getValue().idProperty().get());
+    }
+
+    @FXML
+    public void runCampaignButtonPressed() {
+        viewModel.runCampaignCommand(campaignsTable.getSelectionModel().getSelectedItem().getValue()).execute();
     }
 }

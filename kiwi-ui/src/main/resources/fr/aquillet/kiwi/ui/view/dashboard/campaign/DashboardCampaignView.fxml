@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.layout.*?>
@@ -8,11 +9,27 @@
 <Tab xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" text="Campagne"
      fx:controller="fr.aquillet.kiwi.ui.view.dashboard.campaign.DashboardCampaignView">
     <VBox alignment="CENTER" spacing="10">
-        <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS">
+        <HBox alignment="BOTTOM_RIGHT" minHeight="70.0" maxHeight="70.0" prefHeight="40.0" VBox.vgrow="ALWAYS"
+              spacing="10">
+            <padding>
+                <Insets left="10" right="10"/>
+            </padding>
             <HBox alignment="CENTER_LEFT" maxHeight="40.0" prefHeight="40.0" HBox.hgrow="ALWAYS">
                 <Label text="Launcher actif: "/>
                 <JFXComboBox fx:id="activeLauncherBox"/>
             </HBox>
+            <JFXButton fx:id="runCampaignButton" prefWidth="40.0" styleClass="button-raised"
+                       onAction="#runCampaignButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="PLAY" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
+            <JFXButton fx:id="deleteCampaignButton" prefWidth="40.0" styleClass="button-raised, red"
+                       onAction="#deleteCampaignButtonPressed">
+                <graphic>
+                    <Glyph fontFamily="FontAwesome" icon="TRASH" styleClass="light-glyph"/>
+                </graphic>
+            </JFXButton>
             <JFXButton fx:id="addCampaignButton" prefWidth="40.0" styleClass="button-raised"
                        onAction="#addCampaignButtonPressed">
                 <graphic>
@@ -29,8 +46,6 @@
                 <JFXTreeTableColumn fx:id="campaignScenariosCountColumn" text="Nombre de scénarios" editable="false"
                                     prefWidth="160" resizable="false"/>
                 <JFXTreeTableColumn fx:id="campaignDurationColumn" text="Durée (s)" editable="false" prefWidth="140"
-                                    resizable="false"/>
-                <JFXTreeTableColumn fx:id="campaignRunColumn" text="Lancer" editable="false" prefWidth="60"
                                     resizable="false"/>
             </columns>
         </JFXTreeTableView>
