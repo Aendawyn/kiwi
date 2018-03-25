@@ -2,10 +2,7 @@ package fr.aquillet.kiwi.ui.service.persistence;
 
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.event.Events;
-import fr.aquillet.kiwi.event.campaign.CampaignCreatedEvent;
-import fr.aquillet.kiwi.event.campaign.CampaignScenariosReorderedEvent;
-import fr.aquillet.kiwi.event.campaign.ScenarioAddedToCampaignEvent;
-import fr.aquillet.kiwi.event.campaign.ScenarioRemovedFromCampaignEvent;
+import fr.aquillet.kiwi.event.campaign.*;
 import fr.aquillet.kiwi.model.Application;
 import fr.aquillet.kiwi.model.Campaign;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
@@ -13,12 +10,14 @@ import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
 import fr.aquillet.kiwi.toolkit.jackson.JacksonUtil;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class CampaignPersistenceService implements ICampaignPersistenceService {
 
     private IPersistenceConfiguration configuration;
@@ -74,8 +73,17 @@ public class CampaignPersistenceService implements ICampaignPersistenceService {
         saveCampaign(event.getCampaignId());
     }
 
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(CampaignDeletedEvent event) {
+        deleteCampaign(event.getId());
+    }
+
     private void saveCampaign(UUID campaignId) {
         Optional.ofNullable(applicationService.getCurrentApplication()).ifPresent(application -> saveCampaign(application, campaignId));
+    }
+
+    private void deleteCampaign(UUID campaignId) {
+        Optional.ofNullable(applicationService.getCurrentApplication()).ifPresent(application -> deleteCampaign(application, campaignId));
     }
 
     private void saveCampaign(Application application, UUID campaignId) {
@@ -83,12 +91,23 @@ public class CampaignPersistenceService implements ICampaignPersistenceService {
                 .ifPresent(campaign -> JacksonUtil.write(campaign, Campaign.class, new File(getCampaignsDirectory(application), getCampaignFileName(campaign))));
     }
 
+    private void deleteCampaign(Application application, UUID campaignId) {
+        File file = new File(getCampaignsDirectory(application), getCampaignFileName(campaignId));
+        if (!file.delete()) {
+            log.error("Unable to delete file {}", file.getAbsolutePath());
+        }
+    }
+
     private File getCampaignsDirectory(Application application) {
         return new File(applicationPersistenceService.getApplicationDirectory(application), configuration.getCampaignsDirectoryName());
     }
 
     private String getCampaignFileName(Campaign campaign) {
-        return campaign.getId().toString() + configuration.getFileExtension();
+        return getCampaignFileName(campaign.getId());
+    }
+
+    private String getCampaignFileName(UUID campaignId) {
+        return campaignId.toString() + configuration.getFileExtension();
     }
 
 
