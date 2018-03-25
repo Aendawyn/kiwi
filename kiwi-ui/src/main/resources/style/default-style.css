@@ -115,3 +115,10 @@
 	-fx-padding: 3 10 3 10;
     -fx-background-radius: 10px;
 }
+
+.label-node-small {
+	-fx-text-fill: white;
+	-fx-font-size: 0.75em;
+	-fx-padding: 3;
+    -fx-background-radius: 10px;
+}

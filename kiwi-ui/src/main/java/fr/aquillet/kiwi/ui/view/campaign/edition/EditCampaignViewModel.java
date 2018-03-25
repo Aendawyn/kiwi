@@ -8,6 +8,7 @@ import fr.aquillet.kiwi.command.campaign.RemoveScenarioFromCampaignCommand;
 import fr.aquillet.kiwi.command.campaign.ReorderCampaignScenariosCommand;
 import fr.aquillet.kiwi.model.Campaign;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
+import fr.aquillet.kiwi.ui.service.label.ILabelService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
 import fr.aquillet.kiwi.ui.view.scenario.ScenarioListViewModel;
 import javafx.beans.property.BooleanProperty;
@@ -35,6 +36,8 @@ public class EditCampaignViewModel implements ViewModel {
     @Inject
     private ICampaignService campaignService;
     @Inject
+    private ILabelService labelService;
+    @Inject
     private NotificationCenter notificationCenter;
 
     public void setArguments(UUID campaignId) {
@@ -44,13 +47,13 @@ public class EditCampaignViewModel implements ViewModel {
                         .map(scenarioService::getScenarioById) //
                         .filter(Optional::isPresent) //
                         .map(Optional::get) //
-                        .map(ScenarioListViewModel::new) //
+                        .map(scenario -> new ScenarioListViewModel(scenario, scenario.getLabelId().map(UUID::fromString).flatMap(labelService::getLabelById))) //
                         .collect(Collectors.toList())) //
                 .orElse(Collections.emptyList()));
 
         availableScenarios.setAll(scenarioService.getScenarios().stream() //
                 .filter(scenario -> campaignScenarios.stream().noneMatch(s -> s.idProperty().get().equals(scenario.getId()))) //
-                .map(ScenarioListViewModel::new) //
+                .map(scenario -> new ScenarioListViewModel(scenario, scenario.getLabelId().map(UUID::fromString).flatMap(labelService::getLabelById))) //
                 .collect(Collectors.toList()));
 
         campaignScenarios.addListener((ListChangeListener<? super ScenarioListViewModel>) c -> {
