@@ -1,18 +1,16 @@
 package fr.aquillet.kiwi.ui.service.executor;
 
+import com.google.common.collect.ImmutableList;
 import fr.aquillet.kiwi.jna.JnaService;
-import fr.aquillet.kiwi.model.Campaign;
-import fr.aquillet.kiwi.model.Launcher;
+import fr.aquillet.kiwi.model.*;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
-import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,27 +33,65 @@ public class CampaignExecutorService implements ICampaignExecutorService {
     }
 
     @Override
-    public Completable executeCampaign(UUID launcherId, UUID campaignId, double speedFactor) {
-        return Completable.defer(() -> {
+    public Observable<CampaignExecutionResult> executeCampaign(UUID launcherId, UUID campaignId, double speedFactor) {
+        return Observable.defer(() -> {
             Optional<Launcher> launcherOpt = launcherService.getLauncherById(launcherId);
             Optional<Campaign> campaignOpt = campaignService.getCampaignById(campaignId);
             if (!launcherOpt.isPresent()) {
                 log.error("Launcher {} not found", launcherId);
-                return Completable.error(new NoSuchElementException("launcher"));
+                return Observable.error(new NoSuchElementException("launcher"));
             }
             if (!campaignOpt.isPresent()) {
                 log.error("Campaign {} not found", campaignId);
-                return Completable.error(new NoSuchElementException("campaign"));
+                return Observable.error(new NoSuchElementException("campaign"));
             }
             Launcher launcher = launcherOpt.get();
             Campaign campaign = campaignOpt.get();
 
-            List<Completable> steps = campaign.getScenarioIds().stream()
+            List<Observable<ScenarioExecutionResult>> steps = campaign.getScenarioIds().stream()
                     .map(scenarioId -> scenarioExecutorService.executeScenario(launcherId, scenarioId, speedFactor, true))
                     .collect(Collectors.toList());
 
             return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
-                    .flatMapCompletable(appProcess -> Completable.concat(steps) //
+                    .flatMap(appProcess -> Observable.concat(steps) //
+                            .scan(CampaignExecutionResult.builder() //
+                                            .campaignId(campaignId) //
+                                            .campaignLabel(campaign.getTitle()) //
+                                            .status(ExecutionStatus.SUCCESS_PENDING) //
+                                            .scenariosCount(campaign.getScenarioIds().size()) //
+                                            .successRate(100d) //
+                                            .scenarioResults(Collections.emptyList()) //
+                                            .build(), //
+                                    (acc, result) -> {
+                                        List<ScenarioExecutionResult> newResultsList = ImmutableList.<ScenarioExecutionResult>builder() //
+                                                .addAll(acc.getScenarioResults()) //
+                                                .add(result) //
+                                                .build();
+                                        double newSuccessRate = ((double) (newResultsList.stream()
+                                                .collect(Collectors.partitioningBy(r -> r.getStatus().equals(ExecutionStatus.SUCCESS)))
+                                                .get(Boolean.TRUE).size()) / (double) (newResultsList.size())) * 100.d;
+                                        ExecutionStatus newStatus = ExecutionStatus.SUCCESS;
+                                        if (result.getStatus().equals(ExecutionStatus.ABORTED)) {
+                                            newStatus = ExecutionStatus.ABORTED;
+                                        } else {
+                                            if (newSuccessRate == 100) {
+                                                if (newResultsList.size() == campaign.getScenarioIds().size()) {
+                                                    newStatus = ExecutionStatus.SUCCESS;
+                                                } else {
+                                                    newStatus = ExecutionStatus.SUCCESS_PENDING;
+                                                }
+                                            } else {
+                                                newStatus = ExecutionStatus.FAILURE;
+                                            }
+                                        }
+
+                                        return acc.toBuilder() //
+                                                .scenarioResults(newResultsList) //
+                                                .status(newStatus) //
+                                                .successRate(newSuccessRate) //
+                                                .build();
+                                    }) //
+                            .takeUntil((Predicate<? super CampaignExecutionResult>) campaignExecutionResult -> campaignExecutionResult.getStatus().equals(ExecutionStatus.ABORTED)) //
                             .doOnTerminate(appProcess::destroyForcibly));
         });
     }

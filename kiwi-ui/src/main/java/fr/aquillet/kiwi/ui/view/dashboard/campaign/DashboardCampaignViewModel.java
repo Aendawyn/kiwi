@@ -102,7 +102,7 @@ public class DashboardCampaignViewModel implements ViewModel {
             protected void action() {
                 double speed = 1d;
                 campaignExecutorService.executeCampaign(selectedLauncher.get().idProperty().get(), campaign.idProperty().get(), speed)
-                        .subscribe(RxUtils.nothingToDoCompletable(), RxUtils.logError(log));
+                        .subscribe(RxUtils.nothingToDo(), RxUtils.logError(log));
             }
 
         }, runCampaignPrecondition, true);

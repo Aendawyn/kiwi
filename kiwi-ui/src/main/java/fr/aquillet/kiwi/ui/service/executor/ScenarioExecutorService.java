@@ -1,19 +1,15 @@
 package fr.aquillet.kiwi.ui.service.executor;
 
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.ViewTuple;
 import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.jna.event.KeyboardEvent;
 import fr.aquillet.kiwi.model.*;
+import fr.aquillet.kiwi.toolkit.lang.Java8Util;
+import fr.aquillet.kiwi.toolkit.ui.fx.ImageComparisonResult;
 import fr.aquillet.kiwi.toolkit.ui.fx.ImageUtil;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
-import fr.aquillet.kiwi.ui.util.KiwiStageUtil;
-import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonView;
-import fr.aquillet.kiwi.ui.view.capture.CaptureComparisonViewModel;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,30 +42,25 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
     }
 
     @Override
-    public Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor) {
-        return executeScenario(launcherId, scenarioId, speedFactor, false);
-    }
-
-    @Override
-    public Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive) {
-        return Completable.defer(() -> {
+    public Observable<ScenarioExecutionResult> executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive) {
+        return Observable.defer(() -> {
             Optional<Launcher> launcherOpt = launcherService.getLauncherById(launcherId);
             Optional<Scenario> scenarioOpt = scenarioService.getScenarioById(scenarioId);
             if (!launcherOpt.isPresent()) {
                 log.error("Launcher {} not found", launcherId);
-                return Completable.error(new NoSuchElementException("launcher"));
+                return Observable.error(new NoSuchElementException("launcher"));
             }
             if (!scenarioOpt.isPresent()) {
                 log.error("Scenario {} not found", scenarioId);
-                return Completable.error(new NoSuchElementException("scenario"));
+                return Observable.error(new NoSuchElementException("scenario"));
             }
             Launcher launcher = launcherOpt.get();
             Scenario scenario = scenarioOpt.get();
 
-            List<Observable<?>> steps = scenario.getEvents().stream() //
+            List<Observable<ScenarioExecutionResult>> steps = scenario.getEvents().stream() //
                     .map(event -> scenarioEventToCommand(event) //
                             .delay((int) (event.getTime() / speedFactor), TimeUnit.MILLISECONDS))
-                    .map(Completable::toObservable) //
+                    .map(Completable::<ScenarioExecutionResult>toObservable) //
                     .collect(Collectors.toList());
 
             Observable<Boolean> escapeSequenceObs = jnaService
@@ -88,16 +79,15 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
             if (launcherAlreadyActive) {
                 return jnaService.bringApplicationForeground(launcher.getWindowTitle())
                         .andThen(Observable.concat(steps) //
-                                .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
-                                .takeUntil(escapeSequenceObs)
-                                .ignoreElements());
+                                .concatWith(createExecutionResult(scenario)) //
+                                .takeUntil(escapeSequenceObs) //
+                                .switchIfEmpty(Observable.just(createAbortedExecutionResult(scenario))));
             } else {
                 return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
                         .flatMap(appProcess -> Observable.concat(steps) //
-                                .doOnComplete(() -> compareWithCapture(scenario.getEndCapture())) //
-                                .doOnTerminate(appProcess::destroy)) //
-                        .takeUntil(escapeSequenceObs)
-                        .ignoreElements();
+                                .concatWith(createExecutionResult(scenario)) //
+                                .takeUntil(escapeSequenceObs) //
+                                .switchIfEmpty(Observable.just(createAbortedExecutionResult(scenario))));
             }
 
         });
@@ -111,19 +101,37 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
         return Completable.complete();
     }
 
-    private void compareWithCapture(Capture capture) {
-        ImageUtil.takeForegroundApplicationScreenShot(jnaService.getForegroundWindowBounds()) //
-                .ifPresent(screenShot -> {
-                    Image croppedImage = ImageUtil.cropImage(screenShot, capture.getX(), capture.getY(), capture.getWidth(), capture.getHeight());
-                    Image reference = ImageUtil.createImageFrom(capture.getContent());
-
-                    Platform.runLater(() -> {
-                        ViewTuple<CaptureComparisonView, CaptureComparisonViewModel> viewTuple = FluentViewLoader.fxmlView(CaptureComparisonView.class).load();
-                        viewTuple.getViewModel().originalProperty().set(reference);
-                        viewTuple.getViewModel().sourceProperty().set(croppedImage);
-                        KiwiStageUtil.createStage("Résultat du scénario", viewTuple.getView()).show();
+    private Observable<ScenarioExecutionResult> createExecutionResult(Scenario scenario) {
+        return Observable.defer(() -> {
+            ScenarioExecutionResult.ScenarioExecutionResultBuilder builder = ScenarioExecutionResult.builder()
+                    .scenarioId(scenario.getId()) //
+                    .scenarioLabel(scenario.getTitle()) //
+                    .toleranceThresold(0);
+            Java8Util.ifPresentOrElse( //
+                    ImageUtil.takeForegroundApplicationScreenShot(jnaService.getForegroundWindowBounds()), //
+                    screenShot -> { //
+                        Capture capture = scenario.getEndCapture();
+                        Image croppedImage = ImageUtil.cropImage(screenShot, capture.getX(), capture.getY(), capture.getWidth(), capture.getHeight());
+                        Image reference = ImageUtil.createImageFrom(capture.getContent());
+                        ImageComparisonResult imageComparisonResult = ImageUtil.compareImages(reference, croppedImage);
+                        builder.score(imageComparisonResult.getSimilarity());
+                        builder.status(imageComparisonResult.getSimilarity() == 100 ? ExecutionStatus.SUCCESS : ExecutionStatus.FAILURE);
+                    }, () -> {
+                        builder.score(0);
+                        builder.status(ExecutionStatus.UNKNOWN);
                     });
-                });
+            return Observable.just(builder.build());
+        });
+    }
+
+    private ScenarioExecutionResult createAbortedExecutionResult(Scenario scenario) {
+        return ScenarioExecutionResult.builder() //
+                .scenarioId(scenario.getId()) //
+                .scenarioLabel(scenario.getTitle()) //
+                .score(0) //
+                .toleranceThresold(0) //
+                .status(ExecutionStatus.ABORTED) //
+                .build();
     }
 
 }

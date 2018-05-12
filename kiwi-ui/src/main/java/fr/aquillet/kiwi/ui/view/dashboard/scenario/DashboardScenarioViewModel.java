@@ -104,7 +104,7 @@ public class DashboardScenarioViewModel implements ViewModel {
             protected void action() {
                 double speed = replaySpeed.get();
                 scenarioExecutorService.executeScenario(selectedLauncher.get().idProperty().get(), scenario.idProperty().get(), speed)
-                        .subscribe(RxUtils.nothingToDoCompletable(), RxUtils.logError(log));
+                        .subscribe(RxUtils.nothingToDo(), RxUtils.logError(log));
             }
 
         }, runScenarioPrecondition, true);

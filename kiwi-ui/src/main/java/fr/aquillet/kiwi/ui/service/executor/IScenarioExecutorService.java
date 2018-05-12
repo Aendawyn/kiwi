@@ -1,12 +1,15 @@
 package fr.aquillet.kiwi.ui.service.executor;
 
-import io.reactivex.Completable;
+import fr.aquillet.kiwi.model.ScenarioExecutionResult;
+import io.reactivex.Observable;
 
 import java.util.UUID;
 
 public interface IScenarioExecutorService {
 
-    Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor);
+    default Observable<ScenarioExecutionResult> executeScenario(UUID launcherId, UUID scenarioId, double speedFactor) {
+        return executeScenario(launcherId, scenarioId, speedFactor, false);
+    }
 
-    Completable executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive);
+    Observable<ScenarioExecutionResult> executeScenario(UUID launcherId, UUID scenarioId, double speedFactor, boolean launcherAlreadyActive);
 }
