@@ -90,7 +90,11 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                                                     newStatus = ExecutionStatus.SUCCESS_PENDING;
                                                 }
                                             } else {
-                                                newStatus = ExecutionStatus.FAILURE;
+                                                if (newResultsList.stream().allMatch(r -> r.getStatus().equals(ExecutionStatus.SUCCESS) || r.getStatus().equals(ExecutionStatus.UNKNOWN))) {
+                                                    newStatus = ExecutionStatus.UNKNOWN;
+                                                } else {
+                                                    newStatus = ExecutionStatus.FAILURE;
+                                                }
                                             }
                                         }
 
