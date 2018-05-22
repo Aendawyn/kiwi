@@ -102,6 +102,7 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                                                 .build();
                                     }) //
                             .takeUntil((Predicate<? super CampaignExecutionResult>) campaignExecutionResult -> campaignExecutionResult.getStatus().equals(ExecutionStatus.ABORTED)) //
+                            .takeLast(1) //
                             .doOnNext(resultPersistenceService::save) //
                             .doOnTerminate(appProcess::destroyForcibly));
         });

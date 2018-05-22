@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -59,6 +60,19 @@ public class ImageUtil {
             log.error("Unable to convert image to byte array", e);
         }
         return byteArrayOutputStream.toByteArray();
+    }
+
+    public static void saveToFile(Image image, File dest) {
+        if (!dest.getParentFile().exists() && !dest.getParentFile().mkdirs()) {
+            log.error("Unable to create directory " + dest.getParentFile().getAbsolutePath());
+            return;
+        }
+        BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+        try {
+            ImageIO.write(bImage, "png", dest);
+        } catch (IOException e) {
+            log.error("Unable to save image to file " + dest.getAbsolutePath(), e);
+        }
     }
 
     public static ImageComparisonResult compareImages(final Image source, final Image image) {

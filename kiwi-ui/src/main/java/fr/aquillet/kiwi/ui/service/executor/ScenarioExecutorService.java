@@ -116,7 +116,11 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
                         ImageComparisonResult imageComparisonResult = ImageUtil.compareImages(reference, croppedImage);
                         builder.score(imageComparisonResult.getSimilarity());
                         builder.status(imageComparisonResult.getSimilarity() == 100 ? ExecutionStatus.SUCCESS : ExecutionStatus.FAILURE);
+                        builder.originalCapture(reference);
+                        builder.executionCapture(croppedImage);
+                        builder.diffCapture(imageComparisonResult.getDiffImage());
                     }, () -> {
+                        log.warn("Unable to take application screenshot");
                         builder.score(0);
                         builder.status(ExecutionStatus.UNKNOWN);
                     });
