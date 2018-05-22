@@ -5,31 +5,38 @@ import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.model.*;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
+import fr.aquillet.kiwi.ui.service.persistence.ICampaignExecutionResultPersistenceService;
 import io.reactivex.Observable;
 import io.reactivex.functions.Predicate;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class CampaignExecutorService implements ICampaignExecutorService {
 
+    private static final double SUCCESS_SCORE = 100D;
+
     private ILauncherService launcherService;
     private ICampaignService campaignService;
     private IScenarioExecutorService scenarioExecutorService;
     private JnaService jnaService;
+    private ICampaignExecutionResultPersistenceService resultPersistenceService;
 
     @Inject
     public void setDependencies(final ILauncherService launcherService, //
                                 final ICampaignService campaignService, //
                                 final IScenarioExecutorService scenarioExecutorService, //
-                                final JnaService jnaService) {
+                                final JnaService jnaService,
+                                final ICampaignExecutionResultPersistenceService resultPersistenceService) {
         this.launcherService = launcherService;
         this.campaignService = campaignService;
         this.scenarioExecutorService = scenarioExecutorService;
         this.jnaService = jnaService;
+        this.resultPersistenceService = resultPersistenceService;
     }
 
     @Override
@@ -59,8 +66,10 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                                             .campaignLabel(campaign.getTitle()) //
                                             .status(ExecutionStatus.SUCCESS_PENDING) //
                                             .scenariosCount(campaign.getScenarioIds().size()) //
-                                            .successRate(100d) //
+                                            .successRate(SUCCESS_SCORE) //
                                             .scenarioResults(Collections.emptyList()) //
+                                            .startDate(Instant.now()) //
+                                            .endDate(Instant.now()) //
                                             .build(), //
                                     (acc, result) -> {
                                         List<ScenarioExecutionResult> newResultsList = ImmutableList.<ScenarioExecutionResult>builder() //
@@ -69,12 +78,12 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                                                 .build();
                                         double newSuccessRate = ((double) (newResultsList.stream()
                                                 .collect(Collectors.partitioningBy(r -> r.getStatus().equals(ExecutionStatus.SUCCESS)))
-                                                .get(Boolean.TRUE).size()) / (double) (newResultsList.size())) * 100.d;
+                                                .get(Boolean.TRUE).size()) / (double) (newResultsList.size())) * SUCCESS_SCORE;
                                         ExecutionStatus newStatus = ExecutionStatus.SUCCESS;
                                         if (result.getStatus().equals(ExecutionStatus.ABORTED)) {
                                             newStatus = ExecutionStatus.ABORTED;
                                         } else {
-                                            if (newSuccessRate == 100) {
+                                            if (newSuccessRate == SUCCESS_SCORE) {
                                                 if (newResultsList.size() == campaign.getScenarioIds().size()) {
                                                     newStatus = ExecutionStatus.SUCCESS;
                                                 } else {
@@ -89,9 +98,11 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                                                 .scenarioResults(newResultsList) //
                                                 .status(newStatus) //
                                                 .successRate(newSuccessRate) //
+                                                .endDate(Instant.now()) //
                                                 .build();
                                     }) //
                             .takeUntil((Predicate<? super CampaignExecutionResult>) campaignExecutionResult -> campaignExecutionResult.getStatus().equals(ExecutionStatus.ABORTED)) //
+                            .doOnNext(resultPersistenceService::save) //
                             .doOnTerminate(appProcess::destroyForcibly));
         });
     }

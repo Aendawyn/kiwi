@@ -2,6 +2,7 @@ package fr.aquillet.kiwi.model;
 
 import lombok.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,10 @@ public class CampaignExecutionResult {
     private UUID campaignId;
     @NonNull
     private String campaignLabel;
+    @NonNull
+    private Instant startDate;
+    @NonNull
+    private Instant endDate;
     @NonNull
     private ExecutionStatus status;
     private double successRate;

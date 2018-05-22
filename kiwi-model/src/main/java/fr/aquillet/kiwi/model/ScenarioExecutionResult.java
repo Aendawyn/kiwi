@@ -17,6 +17,6 @@ public class ScenarioExecutionResult {
     @NonNull
     private ExecutionStatus status;
     private double score;
-    private double toleranceThresold;
+    private double toleranceThreshold;
 
 }

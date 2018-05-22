@@ -23,6 +23,7 @@ hs_err_pid*
 
 # Intellij
 .idea
+*.iml
 
 # Eclipse
 .settings
@@ -34,3 +35,4 @@ target
 
 # Kiwi
 repository
+execution-results

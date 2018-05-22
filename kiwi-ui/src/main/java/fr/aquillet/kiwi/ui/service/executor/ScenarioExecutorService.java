@@ -106,7 +106,7 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
             ScenarioExecutionResult.ScenarioExecutionResultBuilder builder = ScenarioExecutionResult.builder()
                     .scenarioId(scenario.getId()) //
                     .scenarioLabel(scenario.getTitle()) //
-                    .toleranceThresold(0);
+                    .toleranceThreshold(0);
             Java8Util.ifPresentOrElse( //
                     ImageUtil.takeForegroundApplicationScreenShot(jnaService.getForegroundWindowBounds()), //
                     screenShot -> { //
@@ -129,7 +129,7 @@ public class ScenarioExecutorService implements IScenarioExecutorService {
                 .scenarioId(scenario.getId()) //
                 .scenarioLabel(scenario.getTitle()) //
                 .score(0) //
-                .toleranceThresold(0) //
+                .toleranceThreshold(0) //
                 .status(ExecutionStatus.ABORTED) //
                 .build();
     }

@@ -6,6 +6,8 @@ public interface IPersistenceConfiguration {
 
     File getRepositoryPath();
 
+    File getExecutionResultsPath();
+
     String getApplicationsDirectoryName();
 
     String getLaunchersDirectoryName();

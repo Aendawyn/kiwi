@@ -7,10 +7,16 @@ import java.io.File;
 public class PersistenceConfiguration implements IPersistenceConfiguration {
 
     private static final String CONFIG_REPOSITORY_PATH_KEY = "service.persistence.repository.path";
+    private static final String CONFIG_EXECUTION_RESULTS_PATH_KEY = "service.persistence.execution.results.path";
 
     @Override
     public File getRepositoryPath() {
         return GlobalConfiguration.getFileValue(CONFIG_REPOSITORY_PATH_KEY);
+    }
+
+    @Override
+    public File getExecutionResultsPath() {
+        return GlobalConfiguration.getFileValue(CONFIG_EXECUTION_RESULTS_PATH_KEY);
     }
 
     @Override
