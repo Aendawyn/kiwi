@@ -122,3 +122,29 @@
 	-fx-padding: 3;
     -fx-background-radius: 10px;
 }
+
+
+/* ******************************
+    Notifications
+   ******************************/
+
+
+.notification-bar>.pane {
+    -fx-background-color: -fx-very-light-green-color;
+    -fx-padding: 5 5 5 5;
+
+    -fx-border-color: -fx-dark-green-color;
+    -fx-border-width: 2.0;
+}
+
+.notification-bar>.pane .title {
+    -fx-font-size: 2em;
+    -fx-padding: 5 5 5 10;
+    -fx-text-fill: -fx-dark-green-color;
+    -fx-font-weight: bold;
+}
+
+.notification-bar>.pane .label {
+    -fx-font-size: 1em;
+    -fx-alignment: top-left;
+}

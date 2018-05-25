@@ -14,11 +14,14 @@ import fr.aquillet.kiwi.event.launcher.LaunchersReloadedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenarioDeletedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenariosReloadedEvent;
+import fr.aquillet.kiwi.model.ScenarioExecutionResult;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
 import fr.aquillet.kiwi.toolkit.dispatch.DispatchUtils;
 import fr.aquillet.kiwi.toolkit.rx.RxUtils;
+import fr.aquillet.kiwi.ui.service.configuration.IExecutionConfiguration;
 import fr.aquillet.kiwi.ui.service.executor.IScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
+import fr.aquillet.kiwi.ui.service.notification.IExecutionNotificationService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
 import fr.aquillet.kiwi.ui.view.launcher.LauncherListViewModel;
 import fr.aquillet.kiwi.ui.view.scenario.ScenarioViewModel;
@@ -28,6 +31,7 @@ import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -47,6 +51,11 @@ public class DashboardScenarioViewModel implements ViewModel {
     private IScenarioExecutorService scenarioExecutorService;
     @Inject
     private NotificationCenter notificationCenter;
+    @Inject
+    private IExecutionNotificationService executionNotificationService;
+    @Inject
+    private IExecutionConfiguration executionConfiguration;
+
 
     public void initialize() {
         runScenarioPrecondition.bind(selectedLauncher.isNotNull());
@@ -104,6 +113,9 @@ public class DashboardScenarioViewModel implements ViewModel {
             protected void action() {
                 double speed = replaySpeed.get();
                 scenarioExecutorService.executeScenario(selectedLauncher.get().idProperty().get(), scenario.idProperty().get(), speed)
+                        .concatMap(scenarioExecutionResult -> executionNotificationService.showNotificationFor(scenarioExecutionResult) //
+                                .<ScenarioExecutionResult>toObservable() //
+                                .delay(executionConfiguration.getScenarioNotificationDurationSeconds(), TimeUnit.SECONDS))
                         .subscribe(RxUtils.nothingToDo(), RxUtils.logError(log));
             }
 

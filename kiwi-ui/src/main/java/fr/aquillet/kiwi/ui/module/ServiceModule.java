@@ -8,6 +8,8 @@ import fr.aquillet.kiwi.ui.service.application.ApplicationService;
 import fr.aquillet.kiwi.ui.service.application.IApplicationService;
 import fr.aquillet.kiwi.ui.service.campaign.CampaignService;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
+import fr.aquillet.kiwi.ui.service.configuration.ExecutionConfiguration;
+import fr.aquillet.kiwi.ui.service.configuration.IExecutionConfiguration;
 import fr.aquillet.kiwi.ui.service.executor.CampaignExecutorService;
 import fr.aquillet.kiwi.ui.service.executor.ICampaignExecutorService;
 import fr.aquillet.kiwi.ui.service.executor.IScenarioExecutorService;
@@ -16,23 +18,29 @@ import fr.aquillet.kiwi.ui.service.label.ILabelService;
 import fr.aquillet.kiwi.ui.service.label.LabelService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import fr.aquillet.kiwi.ui.service.launcher.LauncherService;
+import fr.aquillet.kiwi.ui.service.notification.ExecutionNotificationService;
+import fr.aquillet.kiwi.ui.service.notification.IExecutionNotificationService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
 import fr.aquillet.kiwi.ui.service.scenario.ScenarioService;
 
 public class ServiceModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
-		bind(IDialogService.class).to(DialogService.class).asEagerSingleton();
-		bind(IApplicationService.class).to(ApplicationService.class).asEagerSingleton();
-		bind(ILauncherService.class).to(LauncherService.class).asEagerSingleton();
-		bind(ILabelService.class).to(LabelService.class).asEagerSingleton();
-		bind(IScenarioService.class).to(ScenarioService.class).asEagerSingleton();
-		bind(ICampaignService.class).to(CampaignService.class).asEagerSingleton();
-		bind(DialogService.class).toInstance(new DialogService());
-		bind(JnaService.class).toInstance(new JnaService());
-		bind(IScenarioExecutorService.class).toInstance(new ScenarioExecutorService());
-		bind(ICampaignExecutorService.class).toInstance(new CampaignExecutorService());
-	}
+    @Override
+    protected void configure() {
+        bind(IDialogService.class).to(DialogService.class).asEagerSingleton();
+        bind(IApplicationService.class).to(ApplicationService.class).asEagerSingleton();
+        bind(ILauncherService.class).to(LauncherService.class).asEagerSingleton();
+        bind(ILabelService.class).to(LabelService.class).asEagerSingleton();
+        bind(IScenarioService.class).to(ScenarioService.class).asEagerSingleton();
+        bind(ICampaignService.class).to(CampaignService.class).asEagerSingleton();
+        bind(DialogService.class).toInstance(new DialogService());
+        bind(JnaService.class).toInstance(new JnaService());
+        bind(IScenarioExecutorService.class).toInstance(new ScenarioExecutorService());
+        bind(ICampaignExecutorService.class).toInstance(new CampaignExecutorService());
+
+        bind(IExecutionConfiguration.class).to(ExecutionConfiguration.class).asEagerSingleton();
+
+        bind(IExecutionNotificationService.class).to(ExecutionNotificationService.class).asEagerSingleton();
+    }
 
 }

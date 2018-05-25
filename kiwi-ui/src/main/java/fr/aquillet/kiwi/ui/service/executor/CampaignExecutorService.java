@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import fr.aquillet.kiwi.jna.JnaService;
 import fr.aquillet.kiwi.model.*;
 import fr.aquillet.kiwi.ui.service.campaign.ICampaignService;
+import fr.aquillet.kiwi.ui.service.configuration.IExecutionConfiguration;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
+import fr.aquillet.kiwi.ui.service.notification.IExecutionNotificationService;
 import fr.aquillet.kiwi.ui.service.persistence.ICampaignExecutionResultPersistenceService;
 import io.reactivex.Observable;
 import io.reactivex.functions.Predicate;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,18 +28,24 @@ public class CampaignExecutorService implements ICampaignExecutorService {
     private IScenarioExecutorService scenarioExecutorService;
     private JnaService jnaService;
     private ICampaignExecutionResultPersistenceService resultPersistenceService;
+    private IExecutionConfiguration executionConfiguration;
+    private IExecutionNotificationService executionNotificationService;
 
     @Inject
     public void setDependencies(final ILauncherService launcherService, //
                                 final ICampaignService campaignService, //
                                 final IScenarioExecutorService scenarioExecutorService, //
                                 final JnaService jnaService,
-                                final ICampaignExecutionResultPersistenceService resultPersistenceService) {
+                                final ICampaignExecutionResultPersistenceService resultPersistenceService, //
+                                final IExecutionConfiguration executionConfiguration, //
+                                final IExecutionNotificationService executionNotificationService) {
         this.launcherService = launcherService;
         this.campaignService = campaignService;
         this.scenarioExecutorService = scenarioExecutorService;
         this.jnaService = jnaService;
         this.resultPersistenceService = resultPersistenceService;
+        this.executionConfiguration = executionConfiguration;
+        this.executionNotificationService = executionNotificationService;
     }
 
     @Override
@@ -55,9 +64,18 @@ public class CampaignExecutorService implements ICampaignExecutorService {
             Launcher launcher = launcherOpt.get();
             Campaign campaign = campaignOpt.get();
 
-            List<Observable<ScenarioExecutionResult>> steps = campaign.getScenarioIds().stream()
-                    .map(scenarioId -> scenarioExecutorService.executeScenario(launcherId, scenarioId, speedFactor, true))
-                    .collect(Collectors.toList());
+            List<Observable<ScenarioExecutionResult>> steps = new ArrayList<>();
+            for (int i = 0; i < campaign.getScenarioIds().size(); i++) {
+                UUID scenarioId = campaign.getScenarioIds().get(i);
+                int scenarioNumber = i + 1;
+                steps.add(scenarioExecutorService.executeScenario(launcherId, scenarioId, speedFactor, true) //
+                        .concatMap(result ->
+                                executionNotificationService.showNotificationFor(campaign, result, scenarioNumber) //
+                                        .<ScenarioExecutionResult>toObservable() //
+                                        .concatWith(Observable.just(result) //
+                                                .delay(executionConfiguration.getScenarioNotificationDurationSeconds(), TimeUnit.SECONDS)) //
+                        ));
+            }
 
             return jnaService.runApplication(launcher.getCommand(), launcher.getWorkingDirectory(), launcher.getStartDelaySecond()) //
                     .flatMap(appProcess -> Observable.concat(steps) //
@@ -108,6 +126,9 @@ public class CampaignExecutorService implements ICampaignExecutorService {
                             .takeUntil((Predicate<? super CampaignExecutionResult>) campaignExecutionResult -> campaignExecutionResult.getStatus().equals(ExecutionStatus.ABORTED)) //
                             .takeLast(1) //
                             .doOnNext(resultPersistenceService::save) //
+                            .concatMap(campaignExecutionResult -> executionNotificationService.showNotificationFor(campaign, campaignExecutionResult) //
+                                    .<CampaignExecutionResult>toObservable() //
+                                    .concatWith(Observable.just(campaignExecutionResult))) //
                             .doOnTerminate(appProcess::destroyForcibly));
         });
     }

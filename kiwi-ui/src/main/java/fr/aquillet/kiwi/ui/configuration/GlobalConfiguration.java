@@ -41,4 +41,10 @@ public class GlobalConfiguration {
 		return new File(CONFIGURATION.getProperty(key));
 	}
 
+	public static int getIntValue(String key) {
+		return Integer.parseInt(CONFIGURATION.getProperty(key));
+	}
+
+
+
 }
