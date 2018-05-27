@@ -12,6 +12,7 @@ import fr.aquillet.kiwi.toolkit.ui.fx.JfxUtil;
 import fr.aquillet.kiwi.ui.view.label.LabelListView;
 import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import fr.aquillet.kiwi.ui.view.label.creation.CreateLabelView;
+import fr.aquillet.kiwi.ui.view.label.edition.EditLabelView;
 import fr.aquillet.kiwi.ui.view.launcher.LauncherListView;
 import fr.aquillet.kiwi.ui.view.launcher.LauncherListViewModel;
 import fr.aquillet.kiwi.ui.view.launcher.creation.CreateLauncherView;
@@ -64,6 +65,12 @@ public class DashboardApplicationView implements FxmlView<DashboardApplicationVi
         labelsList.setItems(viewModel.labelsProperty()
                 .sorted(Comparator.comparing(l -> l.titleProperty().get())));
         labelsList.setCellFactory(CachedViewModelCellFactory.createForFxmlView(LabelListView.class));
+        labelsList.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2) {
+                Optional.ofNullable(labelsList.getSelectionModel().getSelectedItem()) //
+                        .ifPresent(selectedItem -> notificationCenter.publish(Commands.OPEN_DIALOG_IN_PARENT, EditLabelView.class, selectedItem.idProperty().get()));
+            }
+        });
     }
 
     public void addLauncherButtonPressed() {

@@ -58,7 +58,7 @@ public class LauncherPersistenceService implements ILauncherPersistenceService {
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
     public void handle(LauncherTitleUpdatedEvent event) {
-        saveLauncher(event.getId());
+        saveLauncher(event.getLauncherId());
     }
 
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)

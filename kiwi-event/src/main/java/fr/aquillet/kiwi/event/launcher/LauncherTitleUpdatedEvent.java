@@ -6,8 +6,8 @@ import java.util.UUID;
 
 @Value
 public class LauncherTitleUpdatedEvent {
-	
-	private UUID id;
-	private String title;
+
+    private UUID launcherId;
+    private String title;
 
 }

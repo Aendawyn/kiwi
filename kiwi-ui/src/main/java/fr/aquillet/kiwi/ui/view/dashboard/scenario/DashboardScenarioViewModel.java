@@ -9,6 +9,8 @@ import fr.aquillet.kiwi.command.Commands;
 import fr.aquillet.kiwi.command.launcher.ReloadLaunchersCommand;
 import fr.aquillet.kiwi.command.scenario.ReloadScenariosCommand;
 import fr.aquillet.kiwi.event.Events;
+import fr.aquillet.kiwi.event.label.LabelColorUpdatedEvent;
+import fr.aquillet.kiwi.event.label.LabelTitleUpdatedEvent;
 import fr.aquillet.kiwi.event.launcher.LauncherCreatedEvent;
 import fr.aquillet.kiwi.event.launcher.LaunchersReloadedEvent;
 import fr.aquillet.kiwi.event.scenario.ScenarioCreatedEvent;
@@ -23,6 +25,7 @@ import fr.aquillet.kiwi.ui.service.executor.IScenarioExecutorService;
 import fr.aquillet.kiwi.ui.service.launcher.ILauncherService;
 import fr.aquillet.kiwi.ui.service.notification.IExecutionNotificationService;
 import fr.aquillet.kiwi.ui.service.scenario.IScenarioService;
+import fr.aquillet.kiwi.ui.view.label.LabelListViewModel;
 import fr.aquillet.kiwi.ui.view.launcher.LauncherListViewModel;
 import fr.aquillet.kiwi.ui.view.scenario.ScenarioViewModel;
 import javafx.beans.property.*;
@@ -31,7 +34,10 @@ import javafx.collections.ObservableList;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -63,6 +69,7 @@ public class DashboardScenarioViewModel implements ViewModel {
         notificationCenter.publish(Commands.LAUNCHER, new ReloadLaunchersCommand());
         notificationCenter.subscribe(Events.SCENARIO, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
         notificationCenter.publish(Commands.SCENARIO, new ReloadScenariosCommand());
+        notificationCenter.subscribe(Events.LABEL, (key, payload) -> DispatchUtils.dispatch(payload[0], this));
     }
 
     public ObservableList<LauncherListViewModel> launchersProperty() {
@@ -104,6 +111,25 @@ public class DashboardScenarioViewModel implements ViewModel {
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
     public void handle(LaunchersReloadedEvent event) {
         reloadLaunchers();
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(LabelTitleUpdatedEvent event) {
+        genericLabelUpdate(event.getLabelId(), labelModel -> labelModel.titleProperty().set(event.getTitle()));
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_JAVAFX)
+    public void handle(LabelColorUpdatedEvent event) {
+        genericLabelUpdate(event.getLabelId(), labelModel -> labelModel.colorProperty().set(event.getColor()));
+    }
+
+    private void genericLabelUpdate(UUID labelId, Consumer<LabelListViewModel> labelModelUpdater) {
+        scenarios.stream() //
+                .map(scenarioViewModel -> scenarioViewModel.labelProperty().get()) //
+                .filter(Optional::isPresent) //
+                .map(Optional::get) //
+                .filter(labelListViewModel -> labelListViewModel.idProperty().get().equals(labelId)) //
+                .forEach(labelModelUpdater);
     }
 
     public Command runScenarioCommand(ScenarioViewModel scenario) {

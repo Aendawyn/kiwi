@@ -2,7 +2,9 @@ package fr.aquillet.kiwi.ui.service.persistence;
 
 import de.saxsys.mvvmfx.utils.notifications.NotificationCenter;
 import fr.aquillet.kiwi.event.Events;
+import fr.aquillet.kiwi.event.label.LabelColorUpdatedEvent;
 import fr.aquillet.kiwi.event.label.LabelCreatedEvent;
+import fr.aquillet.kiwi.event.label.LabelTitleUpdatedEvent;
 import fr.aquillet.kiwi.model.Application;
 import fr.aquillet.kiwi.model.Label;
 import fr.aquillet.kiwi.toolkit.dispatch.Dispatch;
@@ -54,6 +56,16 @@ public class LabelPersistenceService implements ILabelPersistenceService {
     @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
     public void handle(LabelCreatedEvent event) {
         saveLabel(event.getLabel().getId());
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(LabelTitleUpdatedEvent event) {
+        saveLabel(event.getLabelId());
+    }
+
+    @Dispatch(scheduler = Dispatch.DispatchScheduler.SCHEDULER_IO)
+    public void handle(LabelColorUpdatedEvent event) {
+        saveLabel(event.getLabelId());
     }
 
     private void saveLabel(UUID labelId) {
