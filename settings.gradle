@@ -1,0 +1,18 @@
+rootProject.name = 'kiwi-parent'
+include ':kiwi-jna'
+include ':kiwi-ui'
+include ':kiwi-dist'
+include ':kiwi-model'
+include ':kiwi-command'
+include ':kiwi-event'
+include ':kiwi-toolkit'
+include ':kiwi-toolkit-ui'
+
+project(':kiwi-jna').projectDir = "$rootDir/kiwi-jna" as File
+project(':kiwi-ui').projectDir = "$rootDir/kiwi-ui" as File
+project(':kiwi-dist').projectDir = "$rootDir/kiwi-dist" as File
+project(':kiwi-model').projectDir = "$rootDir/kiwi-model" as File
+project(':kiwi-command').projectDir = "$rootDir/kiwi-command" as File
+project(':kiwi-event').projectDir = "$rootDir/kiwi-event" as File
+project(':kiwi-toolkit').projectDir = "$rootDir/kiwi-toolkit" as File
+project(':kiwi-toolkit-ui').projectDir = "$rootDir/kiwi-toolkit-ui" as File
